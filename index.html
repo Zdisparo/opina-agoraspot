@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Avaliação — Demo (Segura)</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;background:#f2f7fb;margin:0}
+  .topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid #e7eef5;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;z-index:1000}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand img{height:24px}
+  .saldo-chip{background:#1db954;color:#fff;font-weight:700;padding:8px 14px;border-radius:999px;font-size:14px}
+  .container{max-width:700px;margin:24px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.06);text-align:center}
+  .logo-big{width:120px;margin:6px auto 12px;display:block}
+  .main-img{width:100%;max-height:360px;object-fit:cover;border-radius:10px}
+  .question{margin:18px 0;font-weight:700}
+  .options{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+  .btn{background:#1db954;color:#fff;padding:12px 22px;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+  input[type="email"],input[type="text"]{width:90%;padding:12px;border:1px solid #d0dbe6;border-radius:8px;margin:8px 0;outline:none}
+
+  /* gain popup */
+  #gainOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;align-items:center;justify-content:center}
+  .gain-box{width:90%;max-width:520px;background:#fff;border-radius:12px;padding:22px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+  .gain-coin{width:44px;height:44px;margin:0 auto 8px;display:block}
+  .gain-value{color:#1db954;font-weight:800;font-size:26px;margin-top:6px}
+
+  /* final modal */
+  #congratsModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;align-items:center;justify-content:center}
+  .congrats-box{width:94%;max-width:720px;background:#fff;border-radius:12px;padding:28px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+  .congrats-ring{width:120px;height:120px;border-radius:999px;border:12px solid #e6f7ea;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 10px}
+  .congrats-amount{color:#1db954;font-weight:800}
+
+  /* antifraud popup */
+  #popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10001;align-items:center;justify-content:center;padding:16px}
+  #popup .box{background:#fff;max-width:520px;width:100%;padding:28px;border-radius:12px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+  /* Emoji anim */
+  .emoji-stage{
+    width:72px;height:72px;border-radius:999px;border:6px solid #1db95422;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 10px;
+    font-size:38px;transition:transform .25s ease;
+  }
+  .emoji-stage.pop{ transform: scale(1.06); }
+  .emoji-ok{ border-color:#1db954; }
+
+  /* progress bar */
+  .progress-wrap{width:100%;background:#e6eef5;border-radius:12px;padding:8px;margin-top:14px}
+  .progress-bar{height:18px;width:0%;background:#1db954;border-radius:10px;transition:width 800ms ease}
+  .muted{color:#6b7a8a;font-size:14px}
+  .small{font-size:13px;color:#6b7a8a;margin-top:6px}
+
+  /* PIX screen styles */
+  .saldo-box{background:#fff;padding:14px;border-radius:8px;border:1px solid #e8edf3;text-align:center;margin-bottom:12px}
+  .saldo-label{font-size:12px;color:#6b7a8a}
+  .saldo-valor{font-size:28px;color:#1db954;font-weight:800;margin-top:6px}
+  .pix-types{display:flex;gap:10px;justify-content:space-between;margin:12px 0}
+  .pix-card{flex:1;background:#fff;border-radius:8px;border:1px solid #e7eef5;padding:12px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pix-card img{width:50px;height:50px;object-fit:contain}
+  .pix-card p{margin:0;font-weight:700}
+  .pix-card.active{border-color:#1db954;box-shadow:0 0 0 2px #1db95422 inset}
+  .input{height:40px;border-radius:6px;border:1px solid #d7e6f0;padding:8px;background:#fff;width:96%;margin:8px auto}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.png" alt="logo">
+    <strong>Spotify</strong>
+  </div>
+  <div id="saldoChip" class="saldo-chip">R$ 0,00</div>
+</header>
+
+<audio id="audioDinheiro" src="dinheiro.mp3" preload="auto"></audio>
+
+<div class="container" id="quiz">
+  <img class="logo-big" src="logo.png" alt="logo">
+  <h2>Bem-vindo(a) — Pesquisa de opinião</h2>
+  <p class="muted">Insira seu e-mail para começar</p>
+  <input type="email" id="emailUser" placeholder="seu@email.com">
+  <br>
+  <button class="btn" onclick="iniciarAvaliacao()">Começar</button>
+</div>
+
+<!-- popup de ganho -->
+<div id="gainOverlay">
+  <div class="gain-box">
+    <img class="gain-coin" src="moeda.gif" alt="moeda">
+    <div class="muted">Você recebeu</div>
+    <div id="gainValue" class="gain-value">R$ 0,00</div>
+  </div>
+</div>
+
+<!-- modal final -->
+<div id="congratsModal">
+  <div class="congrats-box">
+    <div class="congrats-ring">
+      <div style="text-align:center">
+        <div style="font-size:12px;color:#6b7a8a">Seu saldo total</div>
+        <div id="finalAmount" class="congrats-amount">R$ 0,00</div>
+      </div>
+    </div>
+    <h3>Parabéns!</h3>
+    <p class="muted">Você concluiu as avaliações.</p>
+    <div style="width:90%;margin:14px auto 0">
+      <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+      <div class="small">Progresso das avaliações</div>
+    </div>
+    <div style="margin-top:16px">
+      <button class="btn" onclick="goToWithdraw()">Solicitar saque</button>
+    </div>
+  </div>
+</div>
+
+<!-- popup antifraude com cadeado -> check -->
+<div id="popup">
+  <div class="box">
+    <div id="emojiStage" class="emoji-stage">🔒</div>
+    <h3 id="popupTitle">DESBLOQUEAR SEU SALDO</h3>
+    <p class="muted" id="popupText">
+      Usamos uma verificação anti-fraude para garantir sua segurança.
+    </p>
+    <div style="margin-top:14px">
+      <button id="popupBtn" class="btn" onclick="window.location.href='proxima.html'">CONTINUAR</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // CONFIG
+  const artistas = [
+    {nome:'Matue',imagem:'matue.png',valor:34},
+    {nome:'Luan',imagem:'luan.png',valor:25},
+    {nome:'Poze',imagem:'poze.png',valor:32},
+    {nome:'Anitta',imagem:'anita.png',valor:24},
+    {nome:'Ludmilla',imagem:'ludmilla.png',valor:52},
+    {nome:'Cabelin',imagem:'cabelin.png',valor:21},
+    {nome:'Daniel',imagem:'daniel.png',valor:19},
+    {nome:'Ivete',imagem:'ivete.png',valor:43},
+    {nome:'Wesley',imagem:'wesley.png',valor:28},
+    {nome:'Alok',imagem:'alok.png',valor:14}
+  ];
+
+  // STATE
+  let atual = 0;
+  let total = 0;
+  let email = '';
+  const totalPossible = artistas.reduce((s,a)=>s+a.valor,0);
+
+  // DOM
+  const quiz = document.getElementById('quiz');
+  const som = document.getElementById('audioDinheiro');
+  const saldoChip = document.getElementById('saldoChip');
+  const gainOverlay = document.getElementById('gainOverlay');
+  const gainValue = document.getElementById('gainValue');
+  const congratsModal = document.getElementById('congratsModal');
+  const finalAmount = document.getElementById('finalAmount');
+  const progressBar = document.getElementById('progressBar');
+
+  const brl = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2});
+  function atualizarSaldoChip(){ saldoChip.textContent = brl(total); }
+
+  // INÍCIO
+  function iniciarAvaliacao(){
+    const e = document.getElementById('emailUser').value.trim();
+    if(!e){ alert('Digite seu e-mail para prosseguir'); return; }
+    email = e;
+    atualizarSaldoChip();
+    carregarArtista();
+  }
+
+  function carregarArtista(){
+    if(atual >= artistas.length){
+      finalAmount.textContent = brl(total);
+      congratsModal.style.display = 'flex';
+      // no final a barra fica CHEIA
+      progressBar.style.width = '100%';
+      return;
+    }
+    const a = artistas[atual];
+    quiz.innerHTML = `
+      <h3 style="color:#13a64a">Responda e ganhe ${brl(a.valor)}</h3>
+      <img class="main-img" src="${a.imagem}" alt="${a.nome}">
+      <div class="question">De 1 a 5, que nota você daria para as músicas de ${a.nome}?</div>
+      <div class="options">
+        ${[1,2,3,4,5].map(n=>`<label><input type="radio" name="nota" value="${n}">${n}</label>`).join('')}
+      </div>
+      <div class="question">Recomendaria ${a.nome}?</div>
+      <div class="options">
+        <label><input type="radio" name="reco" value="sim">Sim</label>
+        <label><input type="radio" name="reco" value="nao">Não</label>
+      </div>
+      <div class="question">Faixa etária:</div>
+      <div class="options">
+        <label><input type="radio" name="idade" value="-18">-18</label>
+        <label><input type="radio" name="idade" value="+18">+18</label>
+      </div>
+      <button class="btn" onclick="proxima()">Enviar respostas</button>
+    `;
+  }
+
+  function proxima(){
+    const ganho = artistas[atual].valor;
+    total += ganho;
+    atualizarSaldoChip();
+    try{ som.currentTime = 0; som.play(); }catch(e){}
+    // popup de ganho
+    gainValue.textContent = brl(ganho);
+    gainOverlay.style.display = 'flex';
+    setTimeout(()=>{
+      gainOverlay.style.display = 'none';
+      // progresso parcial (visual)
+      const pct = Math.min(100, Math.round((total / totalPossible) * 100));
+      progressBar.style.width = pct + '%';
+      atual++;
+      carregarArtista();
+    }, 1200);
+  }
+
+  // ===== TELA DE SAQUE (PIX simulado) =====
+  function goToWithdraw(){
+    congratsModal.style.display = 'none';
+    quiz.innerHTML = `
+      <div class="saldo-box">
+        <div class="saldo-label">Seu saldo</div>
+        <div class="saldo-valor">${brl(total)}</div>
+      </div>
+
+      <div class="muted" style="margin:6px 0 10px">Selecione seu tipo de chave PIX</div>
+
+      <div class="pix-types">
+        <div class="pix-card" id="tipo-cpf" onclick="selectTipo('cpf')">
+          <img src="cpf.png" alt="CPF / CNPJ"><p>CPF / CNPJ</p>
+        </div>
+        <div class="pix-card" id="tipo-tel" onclick="selectTipo('tel')">
+          <img src="tel.png" alt="Telefone"><p>Telefone</p>
+        </div>
+        <div class="pix-card" id="tipo-email" onclick="selectTipo('email')">
+          <img src="email.png" alt="E-mail"><p>E-mail</p>
+        </div>
+        <div class="pix-card" id="tipo-ale" onclick="selectTipo('ale')">
+          <img src="aleatoria.png" alt="Aleatória"><p>Aleatória</p>
+        </div>
+      </div>
+
+      <input class="input" id="campoPix" placeholder="Digite sua chave PIX aqui">
+      <input class="input" id="campoValor" placeholder="Digite o valor que deseja sacar" value="${brl(total)}">
+
+      <button class="btn" onclick="submitWithdraw()">PIX VIA RAPIDP</button>
+    `;
+  }
+
+  let tipoSelecionado = null;
+  function selectTipo(tipo){
+    tipoSelecionado = tipo;
+    document.querySelectorAll('.pix-card').forEach(c=>c.classList.remove('active'));
+    document.getElementById('tipo-'+tipo).classList.add('active');
+    const campo = document.getElementById('campoPix');
+    if(!campo) return;
+    if(tipo==='cpf') campo.placeholder = 'Digite sua chave PIX aqui (CPF/CNPJ)';
+    if(tipo==='tel') campo.placeholder = 'Digite sua chave PIX aqui (Telefone)';
+    if(tipo==='email') campo.placeholder = 'Digite sua chave PIX aqui (E-mail)';
+    if(tipo==='ale') campo.placeholder = 'Digite sua chave PIX aqui (Aleatória)';
+  }
+
+  // Enviar (SIMULADO) -> abre popup com animação 🔒 -> ✅ e botão para próxima página
+  function submitWithdraw(){
+    const chave = (document.getElementById('campoPix')||{}).value?.trim() || '';
+    const valor = (document.getElementById('campoValor')||{}).value?.trim() || '';
+    if(!tipoSelecionado){ alert('Selecione o tipo de chave PIX.'); return; }
+    if(!chave){ alert('Digite sua chave PIX (simulado).'); return; }
+    if(!valor){ alert('Digite o valor do saque (simulado).'); return; }
+
+    // Mostra popup com animação: cadeado -> check
+    const popup = document.getElementById('popup');
+    const stage = document.getElementById('emojiStage');
+    const title = document.getElementById('popupTitle');
+    const text = document.getElementById('popupText');
+    const btn  = document.getElementById('popupBtn');
+
+    // estado inicial
+    stage.textContent = '🔒';
+    stage.classList.remove('emoji-ok');
+    title.textContent = 'DESBLOQUEAR SEU SALDO';
+    text.textContent  = 'Usamos uma verificação anti-fraude para garantir sua segurança.';
+    btn.textContent   = 'CONTINUAR';
+
+    popup.style.display = 'flex';
+
+    // anima "desbloqueio" -> check
+    setTimeout(()=>{ stage.classList.add('pop'); }, 120);
+    setTimeout(()=>{
+      stage.classList.remove('pop');
+      stage.textContent = '✅';
+      stage.classList.add('emoji-ok');
+      title.textContent = 'Saldo validado!';
+      text.textContent  = 'Validação concluída com sucesso. Clique para continuar.';
+      btn.textContent   = 'Desbloquear Saque';
+    }, 4200);
+  }
+
+  // util
+  const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+</script>
+</body>
+</html>
