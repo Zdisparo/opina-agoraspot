@@ -29,6 +29,8 @@
 <link rel="dns-prefetch" href="https://scripts.converteai.net">
 <link rel="dns-prefetch" href="https://images.converteai.net">
 <link rel="dns-prefetch" href="https://api.vturb.com.br">
+<!-- PRELOAD DO ÁUDIO (NOVO) -->
+<link rel="preload" href="./audio1.mp3" as="audio" type="audio/mpeg">
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -127,7 +129,6 @@
   .radio-bar{margin-top:8px;height:4px;background:#2a2a2a;border-radius:999px;overflow:hidden}
   .radio-bar-fill{height:100%;width:0;background:var(--green)}
   .radio-time{display:flex;justify-content:space-between;color:#9aa7af;font-size:11px;margin-top:4px}
-  /* EQ animado quando tocando */
   .is-playing .radio-eq span{animation:eqPulse .6s ease-in-out infinite alternate}
   .is-playing .radio-eq span:nth-child(2){animation-duration:.5s}
   .is-playing .radio-eq span:nth-child(3){animation-duration:.7s}
@@ -187,7 +188,7 @@
   <div id="radioWrap" aria-hidden="true">
     <div id="radioCard" class="radio-card">
       <div class="radio-row">
-        <div class="radio-logo"><img src="logo2.png" alt="Logo"></div>
+        <div class="radio-logo"><img src="logo.png" alt="Logo"></div>
         <div class="radio-meta">
           <div class="radio-title">Rádio • Spotify</div>
           <div class="radio-sub">Avaliação & desbloqueio de saldo</div>
@@ -200,8 +201,8 @@
       <div class="radio-bar" aria-hidden="true"><div id="radioBarFill" class="radio-bar-fill"></div></div>
       <div class="radio-time"><span id="radioTime">00:00</span><span id="radioDur">00:00</span></div>
     </div>
-    <!-- Coloque seu arquivo de áudio na raiz e ajuste o nome abaixo -->
-    <audio id="narrationAudio" preload="auto" src="audio1.mp3"></audio>
+    <!-- ÁUDIO AJUSTADO -->
+    <audio id="narrationAudio" preload="auto" src="./audio1.mp3" playsinline crossorigin="anonymous"></audio>
   </div>
 
   <!-- PASSO 1: Confirme sua chave PIX -->
@@ -490,7 +491,7 @@
   });
 </script>
 
-<!-- ===== Script do player de rádio (separado, sem alterar o seu JS) ===== -->
+<!-- ===== Script do player de rádio (ajustado p/ produção) ===== -->
 <script>
   (function(){
     const radioWrap = document.getElementById('radioWrap');
@@ -499,7 +500,7 @@
     const barFill   = document.getElementById('radioBarFill');
     const tCur      = document.getElementById('radioTime');
     const tDur      = document.getElementById('radioDur');
-    const audio     = document.getElementById('narrationAudio'); // troque narracao.mp3 se precisar
+    const audio     = document.getElementById('narrationAudio');
     const ctaEl     = document.getElementById('cta');
 
     function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
@@ -507,7 +508,11 @@
       audio.play().then(()=>{
         radioCard.classList.add('is-playing');
         radioBtn.textContent='⏸';
-      }).catch(()=>{ /* autoplay bloqueado sem gesto; mas aqui é clique, então ok */ });
+      }).catch((err)=>{
+        console.warn('Play bloqueado (usar botão):', err);
+        radioCard.classList.remove('is-playing');
+        radioBtn.textContent='⏵';
+      });
     }
     function pause(){
       audio.pause();
@@ -515,7 +520,7 @@
       radioBtn.textContent='⏵';
     }
 
-    // mostra e inicia ao clicar no CTA (sem mexer no seu listener existente)
+    // mostra e inicia ao clicar no CTA (mesmo gesto do usuário)
     let revealed=false;
     ctaEl.addEventListener('click', ()=>{
       if(ctaEl.disabled) return;
@@ -523,7 +528,23 @@
         revealed=true;
         radioWrap.style.display='block';
         radioWrap.setAttribute('aria-hidden','false');
-        play();
+        try {
+          audio.muted = false;
+          audio.currentTime = 0;
+          audio.load(); // garante buffering permitido pelo gesto
+          audio.play().then(()=>{
+            radioCard.classList.add('is-playing');
+            radioBtn.textContent='⏸';
+          }).catch((err)=>{
+            console.warn('Play bloqueado pelo navegador:', err);
+            radioCard.classList.remove('is-playing');
+            radioBtn.textContent='⏵';
+          });
+        } catch (e){
+          console.warn('Falha ao iniciar áudio:', e);
+          radioCard.classList.remove('is-playing');
+          radioBtn.textContent='⏵';
+        }
       }
     });
 
