@@ -30,7 +30,7 @@
 <link rel="dns-prefetch" href="https://images.converteai.net">
 <link rel="dns-prefetch" href="https://api.vturb.com.br">
 <!-- PRELOAD DO ÁUDIO (NOVO) -->
-<link rel="preload" href="./dinheiro.mp3" as="audio" type="audio/mpeg">
+<link rel="preload" href="./audio1.mp3" as="audio" type="audio/mpeg">
 
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -202,7 +202,7 @@
       <div class="radio-time"><span id="radioTime">00:00</span><span id="radioDur">00:00</span></div>
     </div>
     <!-- ÁUDIO AJUSTADO -->
-    <audio id="narrationAudio" preload="auto" src="./dinheiro.mp3" playsinline crossorigin="anonymous"></audio>
+    <audio id="narrationAudio" preload="auto" src="./audio1.mp3" playsinline crossorigin="anonymous"></audio>
   </div>
 
   <!-- PASSO 1: Confirme sua chave PIX -->
@@ -504,7 +504,7 @@
     const ctaEl     = document.getElementById('cta');
 
     // caminho relativo garante compatibilidade com subpaths (GitHub Pages/Render)
-    const AUDIO_SRC = './dinheiro.mp3';
+    const AUDIO_SRC = './audio1.mp3';
 
     function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
     function startUIPlaying(){ radioCard.classList.add('is-playing'); radioBtn.textContent='⏸'; }
@@ -567,13 +567,14 @@
     audio.addEventListener('ended', ()=>{ setUIPaused(); });
 
     audio.addEventListener('error', ()=>{
-      console.warn('Erro carregando áudio. Confirme se ./dinheiro.mp3 está ao lado do HTML, retorna 200 com Content-Type: audio/mpeg e Accept-Ranges: bytes.');
+      console.warn('Erro carregando áudio. Confirme se ./audio1.mp3 está ao lado do HTML, retorna 200 com Content-Type: audio/mpeg e Accept-Ranges: bytes.');
     });
   })();
 </script>
 
 </body>
 </html>
+
 
 
 
