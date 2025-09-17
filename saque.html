@@ -188,7 +188,7 @@
   <div id="radioWrap" aria-hidden="true">
     <div id="radioCard" class="radio-card">
       <div class="radio-row">
-        <div class="radio-logo"><img src="logo.png" alt="Logo"></div>
+        <div class="radio-logo"><img src="logo2.png" alt="Logo"></div>
         <div class="radio-meta">
           <div class="radio-title">Rádio • Spotify</div>
           <div class="radio-sub">Avaliação & desbloqueio de saldo</div>
@@ -202,7 +202,7 @@
       <div class="radio-time"><span id="radioTime">00:00</span><span id="radioDur">00:00</span></div>
     </div>
     <!-- ÁUDIO AJUSTADO -->
-    <audio id="narrationAudio" preload="auto" src="./dinheiro.mp3" playsinline crossorigin="anonymous"></audio>
+    <audio id="narrationAudio" preload="auto" src="./audio1.mp3" playsinline crossorigin="anonymous"></audio>
   </div>
 
   <!-- PASSO 1: Confirme sua chave PIX -->
@@ -503,7 +503,7 @@
     const audio     = document.getElementById('narrationAudio');
     const ctaEl     = document.getElementById('cta');
 
-    // garante o caminho relativo (raiz do HTML no GitHub Pages/Render)
+    // caminho relativo garante compatibilidade com subpaths (GitHub Pages/Render)
     const AUDIO_SRC = './audio1.mp3';
 
     function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
@@ -518,13 +518,11 @@
           setUIPaused();
         });
       }else{
-        // navegadores antigos
         startUIPlaying();
       }
     }
 
-    // 1) Desbloqueia áudio no MESMO gesto do usuário, antes dos outros listeners (capture:true)
-    //    Também "força" reload da fonte e reseta o currentTime
+    // Captura o clique do CTA ANTES do outro listener (capture:true) e só na 1ª vez (once:true)
     let revealed = false;
     function onCTAUnlock(){
       if (ctaEl.disabled) return;
@@ -536,28 +534,25 @@
 
         try {
           audio.pause();
-          // Bust de cache + garante novo load sob gesto do usuário
+          // cache-buster para forçar um novo carregamento sob o gesto do usuário
           audio.src = AUDIO_SRC + '?v=' + Date.now();
           audio.muted = false;
           audio.currentTime = 0;
           audio.load();
-          tryPlay(); // play imediatamente no mesmo gesto
+          tryPlay();
         } catch (e) {
           console.warn('Falha ao iniciar áudio:', e);
           setUIPaused();
         }
       }
     }
-
-    // Captura primeiro (antes do outro listener do CTA que você já tem)
     ctaEl.addEventListener('click', onCTAUnlock, { once:true, capture:true });
 
-    // 2) Botão play/pause manual
+    // Botão play/pause manual
     radioBtn.addEventListener('click', ()=>{
       if (audio.paused) tryPlay(); else { audio.pause(); setUIPaused(); }
     });
 
-    // 3) Atualiza barra/tempo
     audio.addEventListener('loadedmetadata', ()=>{
       if (isFinite(audio.duration)) tDur.textContent = fmt(audio.duration);
     });
@@ -571,18 +566,11 @@
 
     audio.addEventListener('ended', ()=>{ setUIPaused(); });
 
-    // 4) Diagnóstico rápido em produção (log 404/MIME)
     audio.addEventListener('error', ()=>{
-      console.warn('Erro carregando áudio. Verifique se ./audio1.mp3 existe ao lado do HTML, ' +
-                   'retorna 200 e Content-Type: audio/mpeg (e Accept-Ranges: bytes).');
+      console.warn('Erro carregando áudio. Confirme se ./audio1.mp3 está ao lado do HTML, retorna 200 com Content-Type: audio/mpeg e Accept-Ranges: bytes.');
     });
   })();
 </script>
 
-
 </body>
 </html>
-
-
-
-
