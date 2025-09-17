@@ -85,6 +85,8 @@
 
   /* Social proof scroller (novo) */
   #socialProof{display:none;max-width:760px;margin:16px auto 40px;padding:0 16px}
+  /* >>> NOVO: social proof extra logo abaixo do player <<< */
+  #socialProofTop{display:block;max-width:760px;margin:12px auto 8px;padding:0 16px}
   .sp-rail{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
   .sp-track{display:flex;width:200%;animation:sp-marquee 45s linear infinite}
   .sp-group{display:flex;width:50%;gap:18px}
@@ -104,6 +106,8 @@
     .pix-types{grid-template-columns:repeat(2,1fr)}
     .sp-item{width:110px;flex-basis:110px}
   }
+
+  
 
   /* ====== Rádio estilo Spotify (NOVO) ====== */
   #radioWrap{display:none;max-width:760px;margin:14px auto 0;padding:0 16px}
@@ -179,6 +183,70 @@
     </iframe>
   </div>
 </div>
+
+  <!-- >>> NOVO: depoimentos em loop abaixo do player <<< -->
+  <div id="socialProofTop" aria-hidden="false">
+    <div class="sp-rail">
+      <div class="sp-track">
+        <!-- Grupo A -->
+        <div class="sp-group">
+          <div class="sp-item">
+            <div class="sp-note">“Caiu rapidinho! 😍”</div>
+            <div class="sp-avatar"><img src="perfil1.png" alt="Ana Souza"><span class="sp-dot"></span></div>
+            <div class="sp-name">Ana Souza</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Processo simples 👌”</div>
+            <div class="sp-avatar"><img src="perfil2.png" alt="Diego Lima"><span class="sp-dot"></span></div>
+            <div class="sp-name">Diego Lima</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Pix em minutos ⏱️”</div>
+            <div class="sp-avatar"><img src="perfil3.png" alt="Larissa Moraes"><span class="sp-dot"></span></div>
+            <div class="sp-name">Larissa Moraes</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Muito prático! 🙌”</div>
+            <div class="sp-avatar"><img src="perfil4.png" alt="Rafael Nunes"><span class="sp-dot"></span></div>
+            <div class="sp-name">Rafael Nunes</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Sem dor de cabeça 😮‍💨”</div>
+            <div class="sp-avatar"><img src="perfil5.png" alt="Beatriz Rocha"><span class="sp-dot"></span></div>
+            <div class="sp-name">Beatriz Rocha</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Indico demais ⭐”</div>
+            <div class="sp-avatar"><img src="perfil6.png" alt="Carlos Mendes"><span class="sp-dot"></span></div>
+            <div class="sp-name">Carlos Mendes</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Seguro e rápido ✅”</div>
+            <div class="sp-avatar"><img src="perfil7.png" alt="Julia Prado"><span class="sp-dot"></span></div>
+            <div class="sp-name">Julia Prado</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Tudo certo por aqui 👍”</div>
+            <div class="sp-avatar"><img src="perfil8.png" alt="Marcos Alves"><span class="sp-dot"></span></div>
+            <div class="sp-name">Marcos Alves</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Curti a experiência 💚”</div>
+            <div class="sp-avatar"><img src="perfil9.png" alt="Gabriela Lins"><span class="sp-dot"></span></div>
+            <div class="sp-name">Gabriela Lins</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Recomendo! 😉”</div>
+            <div class="sp-avatar"><img src="perfil10.png" alt="Bruno Teixeira"><span class="sp-dot"></span></div>
+            <div class="sp-name">Bruno Teixeira</div>
+          </div>
+        </div>
+        
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- botão -->
   <button id="cta" class="cta" disabled>DESBLOQUEAR SAQUE (aguarde 30s)</button>
@@ -341,7 +409,7 @@
   const checkoutFrame = document.getElementById('checkoutFrame');
   const socialProof   = document.getElementById('socialProof');
 
-  const DELAY_MS = 0000; // mantendo como você deixou
+  const DELAY_MS = 50000; // mantendo como você deixou
   let remaining = Math.ceil(DELAY_MS/1000);
   let tick, preloaded = false;
 
@@ -574,8 +642,3 @@
 
 </body>
 </html>
-
-
-
-
-
