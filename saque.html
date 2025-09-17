@@ -17,7 +17,7 @@
   a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
   document.head.appendChild(a);
 </script>
-  
+
 <head>
 
 <link rel="preload" href="https://scripts.converteai.net/80a6a49a-7ebf-469d-993e-79d7f30f1366/players/68c9e9a08b434c3ece7b1537/v4/embed.html">
@@ -39,75 +39,50 @@
     --dark:#0f8a3e;
     --text:#2b3a47;
     --muted:#5f6e7a;
+    --line:#e9eef1;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:#fff}
-  /* faixa superior */
-  .top-strip{
-    background:var(--green);
-    color:#fff;
-    font-weight:800;
-    letter-spacing:.5px;
-    text-transform:uppercase;
-    text-align:center;
-    padding:14px 10px;
-    font-size:18px;
-  }
-  /* container central */
-  .wrap{
-    max-width:760px;
-    margin:26px auto 60px;
-    padding:0 16px;
-  }
-  .header{
-    display:flex;align-items:center;justify-content:space-between;gap:12px;
-  }
+  .top-strip{background:var(--green);color:#fff;font-weight:800;letter-spacing:.5px;text-transform:uppercase;text-align:center;padding:14px;font-size:18px}
+  .wrap{max-width:760px;margin:26px auto 60px;padding:0 16px}
+  .header{display:flex;align-items:center;justify-content:space-between;gap:12px}
   .logo{height:28px}
-  .saldo-chip{
-    display:inline-flex;align-items:center;gap:10px;
-    border:2px solid #dfe8e3;border-radius:10px;padding:10px 14px;
-    font-weight:800;color:var(--text);background:#fff;
-    box-shadow:0 3px 10px rgba(0,0,0,.06);
-  }
+  .saldo-chip{display:inline-flex;align-items:center;gap:10px;border:2px solid #dfe8e3;border-radius:10px;padding:10px 14px;font-weight:800;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.06)}
   .saldo-chip small{display:block;font-size:11px;color:#6d7a86;font-weight:700;text-transform:uppercase;letter-spacing:.6px;text-align:center}
   .saldo-chip b{display:block;color:var(--green);font-size:18px}
-  .divider{height:2px;background:#e9eef1;margin:18px 0}
-  h1{
-    color:var(--green);
-    text-transform:uppercase;
-    font-size:24px;
-    text-align:center;
-    margin:8px 0 6px;
-  }
-  .sub{
-    text-align:center;color:#2d3b46;max-width:540px;margin:0 auto 16px;font-size:18px;line-height:1.35;
-  }
-  /* vídeo */
-  #videoWrap{
-    width:100%;max-width:600px;margin:0 auto 22px;border-radius:6px;overflow:hidden;
-    box-shadow:0 10px 25px rgba(0,0,0,.12);
-  }
-  /* botão */
-  .cta{
-    display:block;width:100%;max-width:420px;margin:14px auto 0;
-    background:var(--green);color:#fff;border:none;border-radius:8px;
-    padding:16px 22px;font-weight:800;font-size:16px;cursor:pointer;
-    transition:filter .2s ease,transform .02s ease;
-  }
+  .divider{height:2px;background:var(--line);margin:18px 0}
+  h1{color:var(--green);text-transform:uppercase;font-size:24px;text-align:center;margin:8px 0 6px}
+  .sub{text-align:center;color:#2d3b46;max-width:540px;margin:0 auto 16px;font-size:18px;line-height:1.35}
+  #videoWrap{width:100%;max-width:600px;margin:0 auto 22px;border-radius:6px;overflow:hidden;box-shadow:0 10px 25px rgba(0,0,0,.12)}
+  .cta{display:block;width:100%;max-width:420px;margin:14px auto 0;background:var(--green);color:#fff;border:none;border-radius:8px;padding:16px 22px;font-weight:800;font-size:16px;cursor:pointer;transition:filter .2s ease,transform .02s ease}
   .cta:active{transform: translateY(1px)}
-  .cta[disabled]{
-    opacity:.55;cursor:not-allowed;filter:grayscale(30%);
-  }
-  /* rodapé sutil opcional */
-  .note{
-    text-align:center;color:#8a98a4;font-size:12px;margin-top:12px;
-  }
+  .cta[disabled]{opacity:.55;cursor:not-allowed;filter:grayscale(30%)}
+  .note{text-align:center;color:#8a98a4;font-size:12px;margin-top:12px}
 
-  /* responsivo leve */
+  /* Área PIX (passo novo) */
+  #pixArea{display:none;max-width:760px;margin:22px auto 0;padding:0 16px}
+  .pix-card{border:1px solid var(--line);border-radius:12px;padding:18px}
+  .pix-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .pix-title{font-weight:800}
+  .pix-saldo{font-weight:800;color:var(--green)}
+  .pix-types{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:12px 0 14px}
+  .pix-type{display:flex;flex-direction:column;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:12px;cursor:pointer;background:#fff;user-select:none}
+  .pix-type.active{outline:2px solid var(--green);outline-offset:0}
+  .pix-type img{width:26px;height:26px;object-fit:contain}
+  .pix-type b{font-size:13px}
+  .pix-input{width:100%;border:1px solid var(--line);border-radius:10px;padding:14px 12px;font-size:15px;margin-bottom:10px}
+  .pix-amount{width:100%;border:1px solid var(--line);border-radius:10px;padding:14px 12px;font-size:15px;margin-bottom:14px}
+  .pix-btn{display:block;width:100%;max-width:280px;margin:0 auto;background:var(--green);color:#fff;border:0;border-radius:8px;padding:14px 18px;font-weight:800;cursor:pointer}
+  .pix-btn .badge{display:inline-block;margin-left:8px;padding:3px 8px;border-radius:999px;background:#0fb35a;color:#fff;font-size:12px;vertical-align:middle}
+  .pix-error{color:#d93025;font-size:13px;text-align:center;margin-top:8px;display:none}
+
+  /* Checkout embutido */
+  #checkoutArea{display:none;max-width:760px;margin:22px auto 0;padding:0 16px}
+  #checkoutFrame{width:100%;height:750px;border:0;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.12)}
+
   @media (max-width:520px){
-    .top-strip{font-size:14px;padding:12px 8px}
-    .saldo-chip{padding:8px 10px}
-    .saldo-chip b{font-size:16px}
+    .top-strip{font-size:14px;padding:12px}
+    .pix-types{grid-template-columns:repeat(2,1fr)}
   }
 </style>
 </head>
@@ -121,7 +96,7 @@
     <div class="saldo-chip">
       <div>
         <small>SALDO</small>
-        <b id="saldoValor">R$ 473,00</b>
+        <b id="saldoValor">R$ 292,00</b>
       </div>
     </div>
   </div>
@@ -154,18 +129,55 @@
   </div>
 </div>
 
-
-
-  <!-- BOTÃO COM DELAY -->
+  <!-- botão -->
   <button id="cta" class="cta" disabled>DESBLOQUEAR SAQUE (aguarde 30s)</button>
   <div class="note" id="countNote">O botão será liberado após 30 segundos de exibição.</div>
+
+  <!-- PASSO 1: Confirme sua chave PIX -->
+  <div id="pixArea">
+    <div class="pix-card">
+      <div class="pix-header">
+        <div class="pix-title">Confirme sua chave PIX para saque</div>
+        <div class="pix-saldo" id="pixSaldo">R$ 292,00</div>
+      </div>
+
+      <div class="pix-types" id="pixTypes">
+        <div class="pix-type active" data-type="cpf">
+          <img src="cpf.png" alt="CPF/CNPJ">
+          <b>CPF / CNPJ</b>
+        </div>
+        <div class="pix-type" data-type="tel">
+          <img src="tel.png" alt="Telefone">
+          <b>Telefone</b>
+        </div>
+        <div class="pix-type" data-type="email">
+          <img src="email.png" alt="E-mail">
+          <b>E-mail</b>
+        </div>
+        <div class="pix-type" data-type="aleatoria">
+          <img src="aleatoria.png" alt="Aleatória">
+          <b>Aleatória</b>
+        </div>
+      </div>
+
+      <input id="pixKey" class="pix-input" type="text" placeholder="Digite sua chave PIX aqui">
+      <input id="pixAmount" class="pix-amount" type="text" value="R$ 292,00" readonly>
+
+      <button id="pixSubmit" class="pix-btn" type="button">PIX VIA RAPIDP <span id="pixBadge" class="badge">CPF/CNPJ</span></button>
+      <div id="pixError" class="pix-error">Chave PIX inválida. Verifique e tente novamente.</div>
+    </div>
+  </div>
+
+  <!-- PASSO 2: Checkout embutido -->
+  <div id="checkoutArea">
+    <iframe id="checkoutFrame" allowpaymentrequest allow="payment *; fullscreen"></iframe>
+  </div>
 </div>
 
 <script>
-  // ======= CONFIG =======
-  // Troque pelo link real do checkout
   const CHECKOUT_URL = "https://go.cinqpay.com.br/pzdhxzc18s";
-  // Permite passar o saldo via URL ?saldo=47300 (em centavos) ou ?saldo=473.00
+  const PRELOAD_BEFORE = 5; // pré-carrega faltando 5s
+
   const saldoLabel = document.getElementById('saldoValor');
   (function setSaldoFromQuery(){
     const q = new URLSearchParams(location.search);
@@ -173,22 +185,41 @@
     let v = q.get('saldo');
     let num = Number(v.toString().replace('.',',').replace(/[^\d,]/g,'').replace(',','.'));
     if(!isNaN(num) && num>0){
-      saldoLabel.textContent = num.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      const fmt = num.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+      saldoLabel.textContent = fmt;
+      document.getElementById('pixSaldo').textContent = fmt;
+      document.getElementById('pixAmount').value = fmt;
     }
   })();
 
-  // ======= DELAY DO BOTÃO (30s) =======
   const cta = document.getElementById('cta');
   const note = document.getElementById('countNote');
-  const DELAY_MS = 50000;
+  const pixArea = document.getElementById('pixArea');
+  const pixTypes = document.getElementById('pixTypes');
+  const pixKey = document.getElementById('pixKey');
+  const pixAmount = document.getElementById('pixAmount');
+  const pixSubmit = document.getElementById('pixSubmit');
+  const pixError = document.getElementById('pixError');
+  const pixBadge = document.getElementById('pixBadge');
+
+  const checkoutArea  = document.getElementById('checkoutArea');
+  const checkoutFrame = document.getElementById('checkoutFrame');
+
+  const DELAY_MS = 49000; // mantendo como você deixou
   let remaining = Math.ceil(DELAY_MS/1000);
-  let tick;
+  let tick, preloaded = false;
 
   function startCountdown(){
     updateLabel();
     tick = setInterval(()=>{
       remaining--;
       updateLabel();
+
+      if(!preloaded && remaining <= PRELOAD_BEFORE){
+        checkoutFrame.src = CHECKOUT_URL + (location.search || "");
+        preloaded = true;
+      }
+
       if(remaining<=0){
         clearInterval(tick);
         liberarBotao();
@@ -209,34 +240,118 @@
     note.textContent = "Botão liberado.";
   }
 
-  // Libera após 30s a partir do carregamento da página
   startCountdown();
 
-  // Clique → checkout
+  // Clique no CTA -> mostra área PIX (passo 1)
   cta.addEventListener('click', ()=>{
     if(cta.disabled) return;
-    window.location.href = CHECKOUT_URL;
+    const saldoTxt = saldoLabel.textContent.trim();
+    document.getElementById('pixSaldo').textContent = saldoTxt || 'R$ 0,00';
+    pixAmount.value = saldoTxt || 'R$ 0,00';
+    pixArea.style.display = 'block';
+    pixArea.scrollIntoView({behavior:'smooth', block:'start'});
+    pixKey.focus();
   });
 
-  // OPCIONAL: se quiser liberar assim que o vídeo chegar a 30s de play real:
-  // Descomente abaixo e comente a chamada startCountdown() acima.
-  /*
-  const player = document.getElementById('videoDemo'); // troque pelo player do vturb se quiser
-  let unlocked = false;
-  player.addEventListener('timeupdate', ()=>{
-    if(!unlocked && player.currentTime >= 30){
-      unlocked = true;
-      liberarBotao();
-    }else if(!unlocked){
-      remaining = Math.max(0, 30 - Math.floor(player.currentTime));
-      updateLabel();
+  // ====== Máscaras e seleção de tipo ======
+  function onlyDigits(s){ return (s||'').replace(/\D+/g,''); }
+
+  function maskCPF(v){
+    const d = onlyDigits(v).slice(0,11);
+    return d.replace(/(\d{3})(\d)/,'$1.$2')
+            .replace(/(\d{3})(\d)/,'$1.$2')
+            .replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+  }
+  function maskCNPJ(v){
+    const d = onlyDigits(v).slice(0,14);
+    return d.replace(/^(\d{2})(\d)/,'$1.$2')
+            .replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3')
+            .replace(/\.(\d{3})(\d)/,'.$1/$2')
+            .replace(/(\d{4})(\d)/,'$1-$2');
+  }
+  function maskPhone(v){
+    const d = onlyDigits(v).slice(0,11);
+    if(d.length <= 10){
+      return d.replace(/^(\d{0,2})(\d{0,4})(\d{0,4}).*/,'($1) $2-$3').trim();
     }
+    return d.replace(/^(\d{0,2})(\d{0,5})(\d{0,4}).*/,'($1) $2-$3').trim();
+  }
+
+  function updateBadge(type){
+    const map = {cpf:'CPF/CNPJ', tel:'Telefone', email:'E-mail', aleatoria:'Aleatória'};
+    pixBadge.textContent = map[type] || 'CPF/CNPJ';
+  }
+
+  // Seleção de tipo de chave
+  pixTypes.addEventListener('click', (e)=>{
+    const card = e.target.closest('.pix-type');
+    if(!card) return;
+    [...pixTypes.children].forEach(el=>el.classList.remove('active'));
+    card.classList.add('active');
+    const t = card.dataset.type;
+
+    if(t==='cpf'){
+      pixKey.placeholder = 'Digite seu CPF ou CNPJ (apenas números)';
+      pixKey.inputMode = 'numeric';
+      pixKey.value = ''; // evita máscara trocada
+    }else if(t==='tel'){
+      pixKey.placeholder = 'Digite seu telefone com DDD (somente números)';
+      pixKey.inputMode = 'numeric';
+      pixKey.value = '';
+    }else if(t==='email'){
+      pixKey.placeholder = 'Digite seu e-mail';
+      pixKey.inputMode = 'email';
+      pixKey.value = '';
+    }else{
+      pixKey.placeholder = 'Cole sua chave aleatória';
+      pixKey.inputMode = 'text';
+      pixKey.value = '';
+    }
+    updateBadge(t);
+    pixKey.focus();
   });
-  */
+
+  // Máscara oninput
+  pixKey.addEventListener('input', ()=>{
+    const type = document.querySelector('.pix-type.active')?.dataset.type || 'cpf';
+    if(type==='cpf'){
+      // decide cpf x cnpj conforme qtd de dígitos
+      const d = onlyDigits(pixKey.value);
+      pixKey.value = d.length > 11 ? maskCNPJ(d) : maskCPF(d);
+    }else if(type==='tel'){
+      pixKey.value = maskPhone(pixKey.value);
+    } // email/aleatoria sem máscara
+  });
+
+  // ====== Validação simples ======
+  function isValidPixKey(){
+    const type = document.querySelector('.pix-type.active')?.dataset.type || 'cpf';
+    const raw = (pixKey.value || '').trim();
+
+    if(type==='email'){
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
+    }
+    if(type==='tel'){
+      return onlyDigits(raw).length >= 10 && onlyDigits(raw).length <= 11;
+    }
+    if(type==='cpf'){
+      const n = onlyDigits(raw);
+      return n.length === 11 || n.length === 14;
+    }
+    return /^[A-Za-z0-9\-]{10,80}$/.test(raw);
+  }
+
+  // Botão "PIX VIA RAPIDP" -> valida e mostra checkout
+  pixSubmit.addEventListener('click', ()=>{
+    pixError.style.display = 'none';
+    if(!isValidPixKey()){
+      pixError.style.display = 'block';
+      return;
+    }
+    checkoutArea.style.display = 'block';
+    checkoutArea.scrollIntoView({behavior:'smooth', block:'start'});
+  });
 </script>
 
 </body>
 </html>
-
-
-
