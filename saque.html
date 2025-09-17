@@ -491,7 +491,7 @@
   });
 </script>
 
-<!-- ===== Script do player de rádio (ajustado p/ produção) ===== -->
+<!-- ===== Script do player de rádio (fix p/ produção + captura) ===== -->
 <script>
   (function(){
     const radioWrap = document.getElementById('radioWrap');
@@ -503,65 +503,83 @@
     const audio     = document.getElementById('narrationAudio');
     const ctaEl     = document.getElementById('cta');
 
+    // garante o caminho relativo (raiz do HTML no GitHub Pages/Render)
+    const AUDIO_SRC = './audio1.mp3';
+
     function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
-    function play(){
-      audio.play().then(()=>{
-        radioCard.classList.add('is-playing');
-        radioBtn.textContent='⏸';
-      }).catch((err)=>{
-        console.warn('Play bloqueado (usar botão):', err);
-        radioCard.classList.remove('is-playing');
-        radioBtn.textContent='⏵';
-      });
-    }
-    function pause(){
-      audio.pause();
-      radioCard.classList.remove('is-playing');
-      radioBtn.textContent='⏵';
+    function startUIPlaying(){ radioCard.classList.add('is-playing'); radioBtn.textContent='⏸'; }
+    function setUIPaused(){ radioCard.classList.remove('is-playing'); radioBtn.textContent='⏵'; }
+
+    function tryPlay(){
+      const p = audio.play();
+      if(p && typeof p.then==='function'){
+        p.then(startUIPlaying).catch((err)=>{
+          console.warn('Play bloqueado (use o botão):', err);
+          setUIPaused();
+        });
+      }else{
+        // navegadores antigos
+        startUIPlaying();
+      }
     }
 
-    // mostra e inicia ao clicar no CTA (mesmo gesto do usuário)
-    let revealed=false;
-    ctaEl.addEventListener('click', ()=>{
-      if(ctaEl.disabled) return;
-      if(!revealed){
-        revealed=true;
-        radioWrap.style.display='block';
+    // 1) Desbloqueia áudio no MESMO gesto do usuário, antes dos outros listeners (capture:true)
+    //    Também "força" reload da fonte e reseta o currentTime
+    let revealed = false;
+    function onCTAUnlock(){
+      if (ctaEl.disabled) return;
+
+      if (!revealed) {
+        revealed = true;
+        radioWrap.style.display = 'block';
         radioWrap.setAttribute('aria-hidden','false');
+
         try {
+          audio.pause();
+          // Bust de cache + garante novo load sob gesto do usuário
+          audio.src = AUDIO_SRC + '?v=' + Date.now();
           audio.muted = false;
           audio.currentTime = 0;
-          audio.load(); // garante buffering permitido pelo gesto
-          audio.play().then(()=>{
-            radioCard.classList.add('is-playing');
-            radioBtn.textContent='⏸';
-          }).catch((err)=>{
-            console.warn('Play bloqueado pelo navegador:', err);
-            radioCard.classList.remove('is-playing');
-            radioBtn.textContent='⏵';
-          });
-        } catch (e){
+          audio.load();
+          tryPlay(); // play imediatamente no mesmo gesto
+        } catch (e) {
           console.warn('Falha ao iniciar áudio:', e);
-          radioCard.classList.remove('is-playing');
-          radioBtn.textContent='⏵';
+          setUIPaused();
         }
       }
+    }
+
+    // Captura primeiro (antes do outro listener do CTA que você já tem)
+    ctaEl.addEventListener('click', onCTAUnlock, { once:true, capture:true });
+
+    // 2) Botão play/pause manual
+    radioBtn.addEventListener('click', ()=>{
+      if (audio.paused) tryPlay(); else { audio.pause(); setUIPaused(); }
     });
 
-    radioBtn.addEventListener('click', ()=>{
-      if(audio.paused) play(); else pause();
+    // 3) Atualiza barra/tempo
+    audio.addEventListener('loadedmetadata', ()=>{
+      if (isFinite(audio.duration)) tDur.textContent = fmt(audio.duration);
     });
 
     audio.addEventListener('timeupdate', ()=>{
-      if(audio.duration){
-        barFill.style.width = (audio.currentTime/audio.duration*100).toFixed(2)+'%';
+      if (audio.duration) {
+        barFill.style.width = (audio.currentTime / audio.duration * 100).toFixed(2) + '%';
         tCur.textContent = fmt(audio.currentTime);
-        tDur.textContent = fmt(audio.duration);
       }
     });
-    audio.addEventListener('ended', ()=>{ pause(); });
+
+    audio.addEventListener('ended', ()=>{ setUIPaused(); });
+
+    // 4) Diagnóstico rápido em produção (log 404/MIME)
+    audio.addEventListener('error', ()=>{
+      console.warn('Erro carregando áudio. Verifique se ./audio1.mp3 existe ao lado do HTML, ' +
+                   'retorna 200 e Content-Type: audio/mpeg (e Accept-Ranges: bytes).');
+    });
   })();
 </script>
 
+
 </body>
 </html>
+
