@@ -40,6 +40,7 @@
     --text:#2b3a47;
     --muted:#5f6e7a;
     --line:#e9eef1;
+    --bubble:#fff;
   }
   *{box-sizing:border-box}
   body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--text);background:#fff}
@@ -59,7 +60,7 @@
   .cta[disabled]{opacity:.55;cursor:not-allowed;filter:grayscale(30%)}
   .note{text-align:center;color:#8a98a4;font-size:12px;margin-top:12px}
 
-  /* Área PIX (passo novo) */
+  /* Área PIX */
   #pixArea{display:none;max-width:760px;margin:22px auto 0;padding:0 16px}
   .pix-card{border:1px solid var(--line);border-radius:12px;padding:18px}
   .pix-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
@@ -80,10 +81,59 @@
   #checkoutArea{display:none;max-width:760px;margin:22px auto 0;padding:0 16px}
   #checkoutFrame{width:100%;height:750px;border:0;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.12)}
 
+  /* Social proof scroller (novo) */
+  #socialProof{display:none;max-width:760px;margin:16px auto 40px;padding:0 16px}
+  .sp-rail{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+  .sp-track{display:flex;width:200%;animation:sp-marquee 45s linear infinite}
+  .sp-group{display:flex;width:50%;gap:18px}
+  .sp-item{width:120px;flex:0 0 120px;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .sp-note{position:relative;background:var(--bubble);border:1px solid var(--line);border-radius:14px;padding:8px 10px;font-size:12px;line-height:1.25;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+  .sp-note::after{content:"";position:absolute;left:22px;bottom:-6px;border-width:6px;border-style:solid;border-color:var(--bubble) transparent transparent transparent;filter:drop-shadow(0 -1px 0 var(--line))}
+  .sp-avatar{position:relative;width:64px;height:64px;border-radius:999px;overflow:hidden;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+  .sp-avatar img{width:100%;height:100%;object-fit:cover;display:block;border-radius:inherit}
+  .sp-dot{position:absolute;right:0;bottom:0;width:12px;height:12px;border-radius:999px;background:#25d366;border:2px solid #fff}
+  .sp-name{font-size:12px;color:#4a5864}
+  @keyframes sp-marquee{
+    0%{transform:translateX(0)}
+    100%{transform:translateX(-50%)}
+  }
   @media (max-width:520px){
     .top-strip{font-size:14px;padding:12px}
     .pix-types{grid-template-columns:repeat(2,1fr)}
+    .sp-item{width:110px;flex-basis:110px}
   }
+
+  /* ====== Rádio estilo Spotify (NOVO) ====== */
+  #radioWrap{display:none;max-width:760px;margin:14px auto 0;padding:0 16px}
+  .radio-card{
+    background:linear-gradient(135deg,#161616,#212121);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    color:#eef2f3;
+    box-shadow:0 10px 25px rgba(0,0,0,.12);
+  }
+  .radio-row{display:flex;align-items:center;gap:12px}
+  .radio-logo{width:44px;height:44px;border-radius:999px;overflow:hidden;background:#fff;display:flex;align-items:center;justify-content:center}
+  .radio-logo img{width:30px;height:30px;object-fit:contain}
+  .radio-meta{display:flex;flex-direction:column;gap:4px}
+  .radio-title{font-weight:800;font-size:14px}
+  .radio-sub{font-size:12px;color:#b9c4cc}
+  .radio-eq{margin-left:auto;display:flex;gap:3px;align-items:flex-end;height:16px}
+  .radio-eq span{width:3px;height:6px;background:#7aa6ff;border-radius:2px;opacity:.8;transform-origin:bottom}
+  .radio-btn{
+    margin-left:8px;min-width:38px;height:38px;border:none;border-radius:999px;background:var(--green);color:#fff;font-size:18px;cursor:pointer
+  }
+  .radio-bar{margin-top:8px;height:4px;background:#2a2a2a;border-radius:999px;overflow:hidden}
+  .radio-bar-fill{height:100%;width:0;background:var(--green)}
+  .radio-time{display:flex;justify-content:space-between;color:#9aa7af;font-size:11px;margin-top:4px}
+  /* EQ animado quando tocando */
+  .is-playing .radio-eq span{animation:eqPulse .6s ease-in-out infinite alternate}
+  .is-playing .radio-eq span:nth-child(2){animation-duration:.5s}
+  .is-playing .radio-eq span:nth-child(3){animation-duration:.7s}
+  .is-playing .radio-eq span:nth-child(4){animation-duration:.55s}
+  .is-playing .radio-eq span:nth-child(5){animation-duration:.65s}
+  @keyframes eqPulse{from{height:5px}to{height:16px}}
 </style>
 </head>
 <body>
@@ -133,6 +183,27 @@
   <button id="cta" class="cta" disabled>DESBLOQUEAR SAQUE (aguarde 30s)</button>
   <div class="note" id="countNote">O botão será liberado após 30 segundos de exibição.</div>
 
+  <!-- ===== Rádio (aparece após clicar no CTA) ===== -->
+  <div id="radioWrap" aria-hidden="true">
+    <div id="radioCard" class="radio-card">
+      <div class="radio-row">
+        <div class="radio-logo"><img src="logo.png" alt="Logo"></div>
+        <div class="radio-meta">
+          <div class="radio-title">Rádio • Spotify</div>
+          <div class="radio-sub">Avaliação & desbloqueio de saldo</div>
+        </div>
+        <div class="radio-eq" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <button id="radioBtn" class="radio-btn" type="button" aria-label="Pausar/Retomar">⏵</button>
+      </div>
+      <div class="radio-bar" aria-hidden="true"><div id="radioBarFill" class="radio-bar-fill"></div></div>
+      <div class="radio-time"><span id="radioTime">00:00</span><span id="radioDur">00:00</span></div>
+    </div>
+    <!-- Coloque seu arquivo de áudio na raiz e ajuste o nome abaixo -->
+    <audio id="narrationAudio" preload="auto" src="audio1.mp3"></audio>
+  </div>
+
   <!-- PASSO 1: Confirme sua chave PIX -->
   <div id="pixArea">
     <div class="pix-card">
@@ -172,6 +243,69 @@
   <div id="checkoutArea">
     <iframe id="checkoutFrame" allowpaymentrequest allow="payment *; fullscreen"></iframe>
   </div>
+
+  <!-- Social proof scroller (mostra quando checkout abre) -->
+  <div id="socialProof" aria-hidden="true">
+    <div class="sp-rail">
+      <div class="sp-track">
+        <!-- Grupo 1 -->
+        <div class="sp-group">
+          <div class="sp-item">
+            <div class="sp-note">“Caiu rapidinho! 😍”</div>
+            <div class="sp-avatar"><img src="perfil1.png" alt="Ana Souza"><span class="sp-dot"></span></div>
+            <div class="sp-name">Ana Souza</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Processo simples 👌”</div>
+            <div class="sp-avatar"><img src="perfil2.png" alt="Diego Lima"><span class="sp-dot"></span></div>
+            <div class="sp-name">Diego Lima</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Pix em minutos ⏱️”</div>
+            <div class="sp-avatar"><img src="perfil3.png" alt="Larissa Moraes"><span class="sp-dot"></span></div>
+            <div class="sp-name">Larissa Moraes</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Muito prático! 🙌”</div>
+            <div class="sp-avatar"><img src="perfil4.png" alt="Rafael Nunes"><span class="sp-dot"></span></div>
+            <div class="sp-name">Rafael Nunes</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Sem dor de cabeça 😮‍💨”</div>
+            <div class="sp-avatar"><img src="perfil5.png" alt="Beatriz Rocha"><span class="sp-dot"></span></div>
+            <div class="sp-name">Beatriz Rocha</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Indico demais ⭐”</div>
+            <div class="sp-avatar"><img src="perfil6.png" alt="Carlos Mendes"><span class="sp-dot"></span></div>
+            <div class="sp-name">Carlos Mendes</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Seguro e rápido ✅”</div>
+            <div class="sp-avatar"><img src="perfil7.png" alt="Julia Prado"><span class="sp-dot"></span></div>
+            <div class="sp-name">Julia Prado</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Tudo certo por aqui 👍”</div>
+            <div class="sp-avatar"><img src="perfil8.png" alt="Marcos Alves"><span class="sp-dot"></span></div>
+            <div class="sp-name">Marcos Alves</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Curti a experiência 💚”</div>
+            <div class="sp-avatar"><img src="perfil9.png" alt="Gabriela Lins"><span class="sp-dot"></span></div>
+            <div class="sp-name">Gabriela Lins</div>
+          </div>
+          <div class="sp-item">
+            <div class="sp-note">“Recomendo! 😉”</div>
+            <div class="sp-avatar"><img src="perfil10.png" alt="Bruno Teixeira"><span class="sp-dot"></span></div>
+            <div class="sp-name">Bruno Teixeira</div>
+          </div>
+        </div>
+       
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -204,8 +338,9 @@
 
   const checkoutArea  = document.getElementById('checkoutArea');
   const checkoutFrame = document.getElementById('checkoutFrame');
+  const socialProof   = document.getElementById('socialProof');
 
-  const DELAY_MS = 49000; // mantendo como você deixou
+  const DELAY_MS = 0000; // mantendo como você deixou
   let remaining = Math.ceil(DELAY_MS/1000);
   let tick, preloaded = false;
 
@@ -293,7 +428,7 @@
     if(t==='cpf'){
       pixKey.placeholder = 'Digite seu CPF ou CNPJ (apenas números)';
       pixKey.inputMode = 'numeric';
-      pixKey.value = ''; // evita máscara trocada
+      pixKey.value = '';
     }else if(t==='tel'){
       pixKey.placeholder = 'Digite seu telefone com DDD (somente números)';
       pixKey.inputMode = 'numeric';
@@ -315,12 +450,11 @@
   pixKey.addEventListener('input', ()=>{
     const type = document.querySelector('.pix-type.active')?.dataset.type || 'cpf';
     if(type==='cpf'){
-      // decide cpf x cnpj conforme qtd de dígitos
       const d = onlyDigits(pixKey.value);
       pixKey.value = d.length > 11 ? maskCNPJ(d) : maskCPF(d);
     }else if(type==='tel'){
       pixKey.value = maskPhone(pixKey.value);
-    } // email/aleatoria sem máscara
+    }
   });
 
   // ====== Validação simples ======
@@ -332,7 +466,8 @@
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
     }
     if(type==='tel'){
-      return onlyDigits(raw).length >= 10 && onlyDigits(raw).length <= 11;
+      const n = onlyDigits(raw);
+      return n.length >= 10 && n.length <= 11;
     }
     if(type==='cpf'){
       const n = onlyDigits(raw);
@@ -341,7 +476,7 @@
     return /^[A-Za-z0-9\-]{10,80}$/.test(raw);
   }
 
-  // Botão "PIX VIA RAPIDP" -> valida e mostra checkout
+  // Botão "PIX VIA RAPIDP" -> valida e mostra checkout + social proof
   pixSubmit.addEventListener('click', ()=>{
     pixError.style.display = 'none';
     if(!isValidPixKey()){
@@ -349,10 +484,63 @@
       return;
     }
     checkoutArea.style.display = 'block';
+    socialProof.style.display = 'block';
+    socialProof.setAttribute('aria-hidden','false');
     checkoutArea.scrollIntoView({behavior:'smooth', block:'start'});
   });
 </script>
 
+<!-- ===== Script do player de rádio (separado, sem alterar o seu JS) ===== -->
+<script>
+  (function(){
+    const radioWrap = document.getElementById('radioWrap');
+    const radioCard = document.getElementById('radioCard');
+    const radioBtn  = document.getElementById('radioBtn');
+    const barFill   = document.getElementById('radioBarFill');
+    const tCur      = document.getElementById('radioTime');
+    const tDur      = document.getElementById('radioDur');
+    const audio     = document.getElementById('narrationAudio'); // troque narracao.mp3 se precisar
+    const ctaEl     = document.getElementById('cta');
+
+    function fmt(t){const m=Math.floor(t/60),s=Math.floor(t%60);return String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+    function play(){
+      audio.play().then(()=>{
+        radioCard.classList.add('is-playing');
+        radioBtn.textContent='⏸';
+      }).catch(()=>{ /* autoplay bloqueado sem gesto; mas aqui é clique, então ok */ });
+    }
+    function pause(){
+      audio.pause();
+      radioCard.classList.remove('is-playing');
+      radioBtn.textContent='⏵';
+    }
+
+    // mostra e inicia ao clicar no CTA (sem mexer no seu listener existente)
+    let revealed=false;
+    ctaEl.addEventListener('click', ()=>{
+      if(ctaEl.disabled) return;
+      if(!revealed){
+        revealed=true;
+        radioWrap.style.display='block';
+        radioWrap.setAttribute('aria-hidden','false');
+        play();
+      }
+    });
+
+    radioBtn.addEventListener('click', ()=>{
+      if(audio.paused) play(); else pause();
+    });
+
+    audio.addEventListener('timeupdate', ()=>{
+      if(audio.duration){
+        barFill.style.width = (audio.currentTime/audio.duration*100).toFixed(2)+'%';
+        tCur.textContent = fmt(audio.currentTime);
+        tDur.textContent = fmt(audio.duration);
+      }
+    });
+    audio.addEventListener('ended', ()=>{ pause(); });
+  })();
+</script>
+
 </body>
 </html>
-
